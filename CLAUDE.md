@@ -23,6 +23,8 @@ pull-up program. Same stack and conventions as KoDevTalk (github.com/nhat111/kor
 - `src/programs/demos.ts` + `src/components/ExerciseDemo.tsx` animated illustrated demos (one per
   pull-up exercise; keyframe poses in a 120×140 box, eased and looped; static under reduced motion).
   Worked muscles are tinted on the figure.
+- Core finishers (plankKnee → plank → sidePlank → hollow) close each pull-up stage; they are
+  `EXERCISES[k].core` and render in the `floor` demo view.
 - `src/programs/muscles.ts` muscles per exercise (primary/secondary); `MuscleMap` (front/back body
   map) and `MuscleChips` render them. Keep muscle claims standard and conservative.
 - `src/lib/device.ts` beep, vibrate, screen wake lock

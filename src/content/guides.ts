@@ -48,11 +48,23 @@ export const PULL_GUIDE: GuideItem[] = [
     bullets: Object.values(MUSCLES).map((m) => `${m.name} (${m.latin}): ${m.role}`),
   },
   {
+    title: 'Plank cuối buổi giúp gì?',
+    paragraphs: [
+      'Mỗi buổi xà đơn kết thúc bằng 2–3 phút cơ lõi. Cơ bụng chắc giúp thân người giữ thẳng khi kéo xà, không đung đưa. Làm sau bài kéo xà để cơ bụng không bị mỏi trước.',
+      'Cơ bụng sâu, cơ hoành, cơ lưng dưới và cơ sàn chậu cùng giữ áp lực ổ bụng. Vì vậy khi plank cần thở đều, không nín thở hay rặn, vì rặn sẽ dồn áp lực xuống sàn chậu. Từ giai đoạn 3, tập thêm cách thở: thở ra siết nhẹ sàn chậu, hít vào thả.',
+    ],
+    bullets: [
+      'Giai đoạn 1: plank chống gối · 2: plank cẳng tay · 3: plank nghiêng · 4: hollow hold.',
+      'Giữ đúng tư thế quan trọng hơn giữ lâu. Run nhẹ là bình thường, võng lưng thì dừng hiệp đó.',
+      'Đau lưng dưới khi plank: hạ xuống chống gối và gặp bác sĩ hoặc chuyên viên vật lý trị liệu nếu đau kéo dài.',
+    ],
+  },
+  {
     title: 'Lịch tập cho người mới',
     bullets: [
       '3 buổi mỗi tuần, nghỉ ít nhất 1 ngày giữa các buổi (ví dụ thứ 2, 4, 6). Cơ lưng và gân tay cần thời gian hồi phục.',
       'Mỗi giai đoạn khoảng 2 tuần. Làm sạch hết số hiệp và số lần mới lên giai đoạn sau.',
-      'Kéo xà và tập Kegel có thể làm cùng ngày, không ảnh hưởng nhau.',
+      'Kegel tập riêng mỗi ngày, kể cả ngày nghỉ xà. Không cần ghép Kegel vào lúc đang plank khi mới tập.',
     ],
   },
   {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { ExerciseDemo } from '../components/ExerciseDemo';
 import { MuscleChips } from '../components/MuscleChips';
 import { MuscleMap } from '../components/MuscleMap';
@@ -60,7 +60,7 @@ export function PullPage() {
     cue = vi.pull.restCue(EXERCISES[step.next.key].name, doseText(step.next));
   } else if (step?.kind === 'work') {
     const e = step.exercise;
-    eyebrow = vi.pull.setLabel(step.exerciseIndex + 1, step.set, e.sets);
+    eyebrow = EXERCISES[e.key].core ? vi.pull.coreSetLabel(step.set, e.sets) : vi.pull.setLabel(step.exerciseIndex + 1, step.set, e.sets);
     title = EXERCISES[e.key].name;
     if (e.hold) {
       big = String(Math.ceil(s.remaining));
@@ -107,7 +107,11 @@ export function PullPage() {
         </div>
         <ol className="exlist">
           {shown.exercises.map((e, i) => (
-            <li key={`${viewIdx}-${e.key}-${i}`} className={i === current ? 'cur' : active && i < current ? 'ok' : ''}>
+            <Fragment key={`${viewIdx}-${e.key}-${i}`}>
+            {EXERCISES[e.key].core && !EXERCISES[shown.exercises[i - 1]?.key]?.core && (
+              <li className="exdivider">{vi.pull.coreBlock}</li>
+            )}
+            <li className={i === current ? 'cur' : active && i < current ? 'ok' : ''}>
               <button
                 type="button"
                 className="exrow"
@@ -134,6 +138,7 @@ export function PullPage() {
                 </div>
               )}
             </li>
+            </Fragment>
           ))}
         </ol>
         {previewing ? (

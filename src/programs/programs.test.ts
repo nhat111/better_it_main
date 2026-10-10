@@ -90,3 +90,17 @@ describe('muscles', () => {
     }
   });
 });
+
+describe('core finisher', () => {
+  it('ends every stage with core work, after all bar work', async () => {
+    const { EXERCISES } = await import('./pullup');
+    for (const stage of STAGES) {
+      const flags = stage.exercises.map((e) => Boolean(EXERCISES[e.key].core));
+      expect(flags[flags.length - 1]).toBe(true);
+      expect(flags.indexOf(true)).toBe(flags.lastIndexOf(false) + 1);
+      const steps = buildPullSteps(stage);
+      const last = steps[steps.length - 1];
+      expect(last.kind === 'work' && EXERCISES[last.exercise.key].core).toBe(true);
+    }
+  });
+});

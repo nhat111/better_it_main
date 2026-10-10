@@ -1,6 +1,6 @@
 import type { ExerciseKey } from './pullup';
 
-export type MuscleKey = 'lats' | 'biceps' | 'forearms' | 'traps' | 'midback' | 'rearDelts' | 'core';
+export type MuscleKey = 'lats' | 'biceps' | 'forearms' | 'traps' | 'midback' | 'rearDelts' | 'core' | 'frontDelts' | 'glutes';
 
 export interface Muscle {
   name: string;
@@ -17,7 +17,9 @@ export const MUSCLES: Record<MuscleKey, Muscle> = {
   traps: { name: 'Cơ thang dưới', latin: 'Lower trapezius', role: 'Kéo bả vai xuống, giữ vai ổn định và xa tai.' },
   midback: { name: 'Cơ lưng giữa', latin: 'Rhomboids, middle trapezius', role: 'Ép hai bả vai vào nhau, quan trọng nhất trong bài kéo xà thấp.' },
   rearDelts: { name: 'Vai sau', latin: 'Posterior deltoid', role: 'Hỗ trợ kéo cánh tay về sau.' },
-  core: { name: 'Cơ bụng', latin: 'Rectus abdominis, obliques', role: 'Giữ thân người thẳng, không đung đưa.' },
+  core: { name: 'Cơ bụng', latin: 'Rectus abdominis, transversus, obliques', role: 'Giữ thân người thẳng, không đung đưa. Làm việc cùng cơ hoành và cơ sàn chậu để giữ áp lực ổ bụng.' },
+  frontDelts: { name: 'Vai trước', latin: 'Anterior deltoid', role: 'Giữ vai vững khi chống cẳng tay trong plank.' },
+  glutes: { name: 'Cơ mông', latin: 'Gluteus maximus, medius', role: 'Giữ hông không võng xuống; plank nghiêng tập thêm cơ mông nhỡ ở hông.' },
 };
 
 export interface MuscleTargets {
@@ -33,6 +35,10 @@ export const EXERCISE_MUSCLES: Record<ExerciseKey, MuscleTargets> = {
   neg: { primary: ['lats', 'biceps'], secondary: ['forearms', 'midback'] },
   band: { primary: ['lats', 'biceps'], secondary: ['midback', 'forearms'] },
   pull: { primary: ['lats', 'biceps'], secondary: ['midback', 'traps', 'forearms', 'core'] },
+  plankKnee: { primary: ['core'], secondary: ['frontDelts', 'glutes'] },
+  plank: { primary: ['core'], secondary: ['frontDelts', 'glutes'] },
+  sidePlank: { primary: ['core'], secondary: ['glutes', 'frontDelts'] },
+  hollow: { primary: ['core'], secondary: ['frontDelts'] },
 };
 
 export type Emphasis = 'primary' | 'secondary' | undefined;

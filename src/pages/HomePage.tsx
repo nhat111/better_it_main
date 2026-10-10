@@ -2,7 +2,7 @@ import { Link } from 'react-router';
 import { Icon } from '../components/Icon';
 import { InstallHint } from '../components/InstallHint';
 import { vi } from '../i18n/vi';
-import { activeDays, dayKey, streak } from '../lib/date';
+import { activeDays, addDays, dayKey, streak } from '../lib/date';
 import { KEGEL_LEVELS, kegelMinutes } from '../programs/kegel';
 import { STAGES, stageMinutes } from '../programs/pullup';
 import { useProgress } from '../storage/progress';
@@ -45,14 +45,14 @@ export function HomePage() {
         <div className="program-head">
           <span className="program-icon"><Icon name="bar" /></span>
           <div className="grow">
-            <div className="eyebrow">{vi.nav.pull} · {vi.home.minutes(stageMinutes(stage))}</div>
+            <div className="eyebrow">{vi.home.pullEyebrow} · {vi.home.minutes(stageMinutes(stage))}</div>
             <h2 className="h2">{vi.pull.stage(pull.stage + 1, stage.name)}</h2>
           </div>
           <span className="dots" aria-label={`${pullWeek}/3`}>
             {[0, 1, 2].map((i) => <i key={i} className={i < pullWeek ? 'on' : ''} />)}
           </span>
         </div>
-        <p className="muted">{vi.home.pullToday(Boolean(pull.log[key]), pullWeek)}</p>
+        <p className="muted">{vi.home.pullToday(Boolean(pull.log[key]), Boolean(pull.log[dayKey(addDays(today, -1))]), pullWeek)}</p>
         <span className="program-cta">{vi.home.pullCta} <Icon name="arrow" size={18} /></span>
       </Link>
 

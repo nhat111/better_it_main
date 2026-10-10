@@ -1,11 +1,39 @@
-export type ExerciseKey = 'hang' | 'scap' | 'row' | 'flex' | 'neg' | 'band' | 'pull';
+export type ExerciseKey =
+  | 'hang' | 'scap' | 'row' | 'flex' | 'neg' | 'band' | 'pull'
+  // Core finishers
+  | 'plankKnee' | 'plank' | 'sidePlank' | 'hollow';
 
 export interface Exercise {
   name: string;
   cue: string;
+  /** Core finisher done at the end of the session. */
+  core?: boolean;
 }
 
+const BREATH = 'Thở đều, không nín thở, không rặn.';
+const PELVIC = 'Thở ra thì siết nhẹ cơ sàn chậu như khi tập Kegel, hít vào thì thả.';
+
 export const EXERCISES: Record<ExerciseKey, Exercise> = {
+  plankKnee: {
+    name: 'Plank chống gối',
+    core: true,
+    cue: `Chống cẳng tay, khuỷu ngay dưới vai, gối chạm sàn. Siết bụng và mông để thân từ gối đến đầu thẳng một đường. ${BREATH}`,
+  },
+  plank: {
+    name: 'Plank cẳng tay',
+    core: true,
+    cue: `Như plank chống gối nhưng duỗi thẳng chân, mũi chân chống sàn. Không võng lưng, không đẩy mông cao. ${BREATH}`,
+  },
+  sidePlank: {
+    name: 'Plank nghiêng',
+    core: true,
+    cue: `Nằm nghiêng, chống một cẳng tay, nâng hông lên thành đường thẳng từ chân đến đầu. Đổi bên sau mỗi hiệp. ${PELVIC}`,
+  },
+  hollow: {
+    name: 'Hollow hold',
+    core: true,
+    cue: `Nằm ngửa, ép lưng dưới sát sàn, nhấc vai và hai chân lên, tay duỗi qua đầu. Đây là tư thế thân người khi kéo xà. Khó quá thì co gối. ${PELVIC}`,
+  },
   hang: {
     name: 'Treo xà thụ động',
     cue: 'Nắm xà rộng hơn vai, tay duỗi thẳng, thả lỏng vai, thở đều. Tăng sức nắm và giãn khớp vai.',
@@ -63,6 +91,7 @@ export const STAGES: readonly Stage[] = [
       { key: 'hang', sets: 3, hold: 20, rest: 60 },
       { key: 'scap', sets: 3, reps: 8, rest: 60 },
       { key: 'row', sets: 3, reps: 8, rest: 90 },
+      { key: 'plankKnee', sets: 3, hold: 20, rest: 30 },
     ],
   },
   {
@@ -73,6 +102,7 @@ export const STAGES: readonly Stage[] = [
       { key: 'flex', sets: 3, hold: 10, rest: 90 },
       { key: 'neg', sets: 3, reps: 3, tempo: 5, rest: 90 },
       { key: 'row', sets: 3, reps: 10, rest: 90 },
+      { key: 'plank', sets: 3, hold: 30, rest: 30 },
     ],
   },
   {
@@ -83,6 +113,7 @@ export const STAGES: readonly Stage[] = [
       { key: 'band', sets: 3, reps: 6, rest: 90 },
       { key: 'neg', sets: 3, reps: 4, tempo: 5, rest: 90 },
       { key: 'flex', sets: 3, hold: 15, rest: 90 },
+      { key: 'sidePlank', sets: 4, hold: 20, rest: 20 },
     ],
   },
   {
@@ -92,7 +123,8 @@ export const STAGES: readonly Stage[] = [
       { key: 'pull', sets: 5, reps: '1–2', rest: 120 },
       { key: 'neg', sets: 3, reps: 5, tempo: 6, rest: 90 },
       { key: 'band', sets: 2, reps: 8, rest: 90 },
-      { key: 'hang', sets: 1, hold: 45, rest: 0 },
+      { key: 'hang', sets: 1, hold: 45, rest: 60 },
+      { key: 'hollow', sets: 3, hold: 20, rest: 30 },
     ],
   },
 ];

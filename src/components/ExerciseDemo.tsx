@@ -146,25 +146,31 @@ function FrontFigure({ p, band, t }: { p: Pose; band?: boolean; t: MuscleTargets
   );
 }
 
-function SideFigure({ p, t }: { p: Pose; t: MuscleTargets }) {
+function SideFigure({ p, t, prone }: { p: Pose; t: MuscleTargets; prone?: boolean }) {
   const faceDeg = angle(p.shoulder, p.head) - 90;
-  const shoe: Point = [p.foot[0] + 1, p.foot[1] - 7]; // heel on floor, toes up
+  const shoe: Point = p.toe ?? [p.foot[0] + 1, p.foot[1] - 7]; // default: heel on floor, toes up
   const len = dist(p.shoulder, p.hip);
   const u: Point = [(p.hip[0] - p.shoulder[0]) / len, (p.hip[1] - p.shoulder[1]) / len];
-  // Normal pointing to the back (toward the floor) and to the belly (toward the ceiling).
-  const back: Point = u[0] > 0 ? [-u[1], u[0]] : [u[1], -u[0]];
+  // Normal pointing to the floor; the back faces it when lying face up, the belly when prone.
+  const down: Point = u[0] > 0 ? [-u[1], u[0]] : [u[1], -u[0]];
+  const back: Point = prone ? [-down[0], -down[1]] : down;
   const belly: Point = [-back[0], -back[1]];
   const backTint = tintOf(t, 'midback') ?? tintOf(t, 'lats');
   const core = tintOf(t, 'core');
+  const glutes = tintOf(t, 'glutes');
+  const gl = add(p.hip, back, 3);
   return (
     <>
       <Leg hip={p.hip} knee={p.knee} foot={p.foot} shoe={shoe} />
       <Seg a={add(p.shoulder, back, 1)} b={add(p.hip, back, 0.5)} w={17} cls="d-skin-s" />
       <Seg a={p.shoulder} b={at(p.shoulder, p.head, 0.6)} w={8} cls="d-skin-s" />
       {backTint && <Seg a={add(p.shoulder, back, 6)} b={add(at(p.shoulder, p.hip, 0.75), back, 5)} w={7} cls={`${backTint}-s`} />}
+      {glutes && <circle cx={gl[0]} cy={gl[1]} r="5" className={glutes} />}
       {core && <Seg a={add(at(p.shoulder, p.hip, 0.35), belly, 5)} b={add(at(p.shoulder, p.hip, 0.95), belly, 4)} w={4} cls={`${core}-s`} />}
       <Head c={p.head} faceDeg={faceDeg} />
       <Arm s={p.shoulder} e={p.elbow} h={p.hand} t={t} />
+      {/* Far arm in front (side plank: top hand on the hip) */}
+      {p.elbow2 && p.hand2 && <Arm s={p.shoulder} e={p.elbow2} h={p.hand2} t={t} />}
       <circle cx={p.shoulder[0]} cy={p.shoulder[1]} r="5.8" className="d-skin d-outline" />
     </>
   );
@@ -181,7 +187,7 @@ export function ExerciseDemo({ exercise, name, size = 'md' }: { exercise: Exerci
 
   return (
     <figure className={`demo demo-${size}`}>
-      <svg viewBox="0 0 120 140" role="img" aria-label={`Minh họa: ${name}`}>
+      <svg viewBox={demo.view === 'floor' ? '10 61 100 117' : '0 0 120 140'} role="img" aria-label={`Minh họa: ${name}`}>
         {demo.view === 'front' ? (
           <>
             <path className="d-frame" d={`M14 140 V${HIGH_BAR_Y - 10} H106 V140`} />
@@ -189,6 +195,12 @@ export function ExerciseDemo({ exercise, name, size = 'md' }: { exercise: Exerci
             <line className="d-bar" x1="16" y1={HIGH_BAR_Y} x2="104" y2={HIGH_BAR_Y} />
             <circle cx={pose.hand[0]} cy={pose.hand[1]} r="4.8" className="d-skin d-outline" />
             <circle cx={mirror(pose.hand)[0]} cy={pose.hand[1]} r="4.8" className="d-skin d-outline" />
+          </>
+        ) : demo.view === 'floor' ? (
+          <>
+            <line className="d-floor" x1="2" y1={FLOOR_Y + 2} x2="118" y2={FLOOR_Y + 2} />
+            <SideFigure p={pose} t={targets} prone={demo.prone} />
+            <circle cx={pose.hand[0]} cy={pose.hand[1]} r="4.8" className="d-skin d-outline" />
           </>
         ) : (
           <>

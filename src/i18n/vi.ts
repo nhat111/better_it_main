@@ -17,13 +17,16 @@ export const vi = {
     title: 'Tập gì hôm nay?',
     kegelToday: (n: number) => (n === 0 ? 'Chưa tập buổi nào. Nên tập 2–3 buổi/ngày.' : `Đã tập ${n} buổi hôm nay.`),
     kegelCta: 'Tập Kegel',
-    pullToday: (trainedToday: boolean, week: number) =>
+    pullToday: (trainedToday: boolean, trainedYesterday: boolean, week: number) =>
       trainedToday
-        ? 'Đã tập hôm nay. Ngày mai nghỉ để cơ hồi phục.'
-        : week >= 3
-          ? 'Đủ 3 buổi tuần này. Tập thêm nhẹ hoặc nghỉ.'
-          : `Tuần này ${week}/3 buổi.`,
-    pullCta: 'Tập xà đơn',
+        ? 'Đã tập hôm nay. Ngày mai nghỉ để cơ hồi phục, chỉ tập Kegel.'
+        : trainedYesterday
+          ? 'Hôm qua đã tập. Hôm nay nên nghỉ xà, chỉ tập Kegel.'
+          : week >= 3
+            ? 'Đủ 3 buổi tuần này. Có thể nghỉ hoặc tập nhẹ.'
+            : `Hôm nay là ngày tập. Tuần này ${week}/3 buổi.`,
+    pullCta: 'Tập xà đơn + plank',
+    pullEyebrow: 'Xà đơn + cơ lõi',
     streak: (n: number) => `Chuỗi Kegel ${n} ngày`,
     minutes: (m: number) => `~${m} phút`,
     disclaimer:
@@ -78,6 +81,8 @@ export const vi = {
     showDemo: 'Xem động tác',
     hideDemo: 'Ẩn',
     setLabel: (ex: number, set: number, of: number) => `Bài ${ex} · Hiệp ${set}/${of}`,
+    coreSetLabel: (set: number, of: number) => `Bài kết thúc · Cơ lõi · Hiệp ${set}/${of}`,
+    coreBlock: 'Bài kết thúc · Cơ lõi',
     rest: 'Nghỉ',
     restLabel: 'Nghỉ giữa hiệp',
     restCue: (name: string, dose: string) => `Tiếp theo: ${name} (${dose}). Lắc tay, thở sâu.`,

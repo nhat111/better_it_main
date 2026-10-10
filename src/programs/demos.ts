@@ -20,6 +20,11 @@ export interface Pose {
   hip: Point;
   knee: Point;
   foot: Point;
+  /** Side view only: where the toes point (shoe direction). */
+  toe?: Point;
+  /** Side view only: the far arm, when it does something different (side plank). */
+  elbow2?: Point;
+  hand2?: Point;
 }
 
 export interface Keyframe {
@@ -32,11 +37,14 @@ export interface Keyframe {
   label: string;
 }
 
-export type View = 'front' | 'side';
+// 'side': under a low bar (row). 'floor': on the floor, no bar (planks).
+export type View = 'front' | 'side' | 'floor';
 
 export interface Demo {
   view: View;
   band?: boolean;
+  /** Side/floor view: belly faces the floor (plank) rather than the ceiling. */
+  prone?: boolean;
   frames: Keyframe[];
 }
 
@@ -93,7 +101,62 @@ const ROW_UP: Pose = {
   hip: [55, 106], knee: [36, 121], foot: [18, FLOOR_Y - 2],
 };
 
+// Planks, side view on the floor, head to the right.
+const PLANK: Pose = {
+  head: [95, 107], shoulder: [84, 112], elbow: [85, 128], hand: [99, 129],
+  hip: [56, 118], knee: [37, 124], foot: [21, 128], toe: [18, 134],
+};
+const PLANK_BREATH: Pose = { ...PLANK, hip: [56, 117.2], knee: [37, 123.6] };
+const PLANK_KNEE: Pose = {
+  head: [95, 107], shoulder: [84, 112], elbow: [85, 128], hand: [99, 129],
+  hip: [61, 121], knee: [45, 130], foot: [30, 123], toe: [26, 119],
+};
+const PLANK_KNEE_BREATH: Pose = { ...PLANK_KNEE, hip: [61, 120.2] };
+// Side plank seen from the front: hips start low, then lift into a line; top hand on the hip.
+const SIDE_LOW: Pose = {
+  head: [94, 104], shoulder: [84, 110], elbow: [85, 128], hand: [99, 129],
+  hip: [56, 124], knee: [38, 128], foot: [22, 130], toe: [19, 134], elbow2: [74, 104], hand2: [60, 119],
+};
+const SIDE_UP: Pose = { ...SIDE_LOW, hip: [56, 117], knee: [38, 124], hand2: [60, 113], elbow2: [74, 101] };
+// Hollow hold: lower back on the floor, shoulders and legs lifted, arms overhead.
+const HOLLOW: Pose = {
+  head: [89, 118], shoulder: [80, 123], elbow: [93, 116], hand: [106, 111],
+  hip: [56, 130], knee: [40, 126], foot: [23, 121], toe: [18, 119],
+};
+const HOLLOW_BREATH: Pose = { ...HOLLOW, knee: [40, 126.8], foot: [23, 122.5], toe: [18, 120.5], head: [89, 118.8] };
+
 export const DEMOS: Record<ExerciseKey, Demo> = {
+  plankKnee: {
+    view: 'floor',
+    prone: true,
+    frames: [
+      { pose: PLANK_KNEE, ms: 1400, hold: 300, label: 'Gối chạm sàn, thân thẳng từ gối đến đầu' },
+      { pose: PLANK_KNEE_BREATH, ms: 1400, hold: 300, label: 'Siết bụng, thở đều' },
+    ],
+  },
+  plank: {
+    view: 'floor',
+    prone: true,
+    frames: [
+      { pose: PLANK, ms: 1400, hold: 300, label: 'Thân thẳng một đường, không võng lưng' },
+      { pose: PLANK_BREATH, ms: 1400, hold: 300, label: 'Siết bụng và mông, thở đều' },
+    ],
+  },
+  sidePlank: {
+    view: 'floor',
+    prone: true,
+    frames: [
+      { pose: SIDE_LOW, ms: 900, hold: 400, label: 'Nằm nghiêng, chống cẳng tay' },
+      { pose: SIDE_UP, ms: 900, hold: 1600, label: 'Nâng hông, thở ra siết nhẹ sàn chậu' },
+    ],
+  },
+  hollow: {
+    view: 'floor',
+    frames: [
+      { pose: HOLLOW, ms: 1500, hold: 300, label: 'Lưng dưới ép sát sàn, nhấc vai và chân' },
+      { pose: HOLLOW_BREATH, ms: 1500, hold: 300, label: 'Thở ra siết nhẹ sàn chậu, hít vào thả' },
+    ],
+  },
   hang: {
     view: 'front',
     frames: [
@@ -166,6 +229,9 @@ function mix(a: Pose, b: Pose, t: number): Pose {
     hip: lerp(a.hip, b.hip, t),
     knee: lerp(a.knee, b.knee, t),
     foot: lerp(a.foot, b.foot, t),
+    toe: a.toe && b.toe ? lerp(a.toe, b.toe, t) : b.toe,
+    elbow2: a.elbow2 && b.elbow2 ? lerp(a.elbow2, b.elbow2, t) : b.elbow2,
+    hand2: a.hand2 && b.hand2 ? lerp(a.hand2, b.hand2, t) : b.hand2,
   };
 }
 

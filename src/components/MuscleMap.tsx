@@ -28,7 +28,7 @@ const SILHOUETTE: Region[] = [
 ];
 
 const FRONT: Region[] = [
-  { shapes: [E(-14, 23, 5, 5.5)], both: true }, // front delts
+  { muscle: 'frontDelts', shapes: [E(-14, 23, 5, 5.5)], both: true },
   { shapes: [P([-11, 21.5], [-0.8, 21.5], [-0.8, 31], [-8.5, 30.5])], both: true }, // chest
   { muscle: 'lats', shapes: [P([-12.6, 25], [-10.4, 24.5], [-9.6, 37], [-11.2, 41])], both: true },
   { muscle: 'core', shapes: [P([-4.8, 33], [4.8, 33], [4.6, 55.5], [-4.6, 55.5])] },
@@ -46,7 +46,7 @@ const BACK: Region[] = [
   { muscle: 'lats', shapes: [P([-12.2, 25.5], [-8.6, 30.5], [-2, 44], [-6.4, 53.5], [-10.4, 43])], both: true },
   { shapes: [E(-17, 33, 3, 6.8)], both: true }, // triceps
   { muscle: 'forearms', shapes: [E(-19.2, 50.5, 2.6, 7.2)], both: true },
-  { shapes: [E(-5, 62.5, 4.8, 4.6)], both: true }, // glutes
+  { muscle: 'glutes', shapes: [E(-5, 62.5, 4.8, 4.6)], both: true },
   { shapes: [E(-5.2, 79, 3.8, 9.5)], both: true }, // hamstrings
 ];
 
