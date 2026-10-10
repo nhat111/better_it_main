@@ -22,6 +22,10 @@
   --hair: #2b2420;
   --shorts: #33414d;
   --bar: #6b7884;
+  --muscle: #d4482a;
+  --muscle-soft: #eea48c;
+  --map-base: #dde3e8;
+  --map-idle: #c4ced6;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -43,6 +47,10 @@
     --hair: #120e0c;
     --shorts: #5a6b79;
     --bar: #9aa8b4;
+    --muscle: #f2643f;
+    --muscle-soft: #8c4632;
+    --map-base: #24313b;
+    --map-idle: #34444f;
     color-scheme: dark;
   }
 }
@@ -246,9 +254,28 @@ a { color: inherit; text-decoration: none; }
 .d-skin-s { stroke: var(--skin); stroke-linecap: round; }
 .d-shirt { fill: var(--accent); }
 .d-shirt-s { stroke: var(--accent); stroke-linecap: round; }
-.d-round { stroke: var(--accent); stroke-width: 4; stroke-linejoin: round; }
+.d-round { stroke-linejoin: round; }
 .d-shorts-s { stroke: var(--shorts); stroke-linecap: round; }
 .d-shoe-s { stroke: var(--shorts); stroke-linecap: round; }
 .d-hair { fill: var(--hair); }
+.d-line { fill: none; stroke: var(--skin-edge); stroke-width: 0.9; stroke-linecap: round; opacity: .8; }
+.d-tint-1 { fill: var(--muscle); opacity: .78; }
+.d-tint-2 { fill: var(--muscle); opacity: .38; }
+.d-tint-1-s { stroke: var(--muscle); stroke-linecap: round; opacity: .78; }
+.d-tint-2-s { stroke: var(--muscle); stroke-linecap: round; opacity: .38; }
+.musclemap { width: 100%; max-width: 170px; height: auto; display: block; }
+.mm-base { fill: var(--map-base); }
+.mm-idle { fill: var(--map-idle); }
+.mm-primary { fill: var(--muscle); }
+.mm-secondary { fill: var(--muscle-soft); }
+.mm-label { fill: var(--muted); font-size: 7px; text-anchor: middle; font-family: var(--body); }
+.muscles { display: grid; gap: 4px; }
+.muscle-row { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.muscles-compact .muscle-row { justify-content: center; }
+.muscle-label { font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; margin-right: 2px; }
+.mchip { font-size: .75rem; padding: 1px 8px; border-radius: 999px; font-weight: 600; }
+.mchip-primary { background: var(--muscle); color: var(--on-accent); }
+.mchip-secondary { background: transparent; color: var(--fg); box-shadow: inset 0 0 0 1px var(--muscle-soft); }
+.expcue { grid-column: 1 / -1; }
 .d-band { fill: none; stroke: var(--warm); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
 @media (max-width: 360px) { .expreview { grid-template-columns: 1fr; justify-items: center; } }

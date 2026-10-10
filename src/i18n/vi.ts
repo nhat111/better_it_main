@@ -92,6 +92,11 @@ export const vi = {
     doneCue: 'Giãn cơ lưng, vai 3–5 phút. Nghỉ ít nhất 1 ngày trước buổi sau.',
     unlocked: (n: number) => `Đã mở giai đoạn ${n}.`,
   },
+  muscles: {
+    primary: 'Cơ chính',
+    secondary: 'Cơ phụ',
+    mapLabel: (name: string) => `Bản đồ nhóm cơ: ${name}`,
+  },
   progress: {
     title: 'Tiến độ',
     kegelLog: 'Kegel · 28 ngày',

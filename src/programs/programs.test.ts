@@ -77,3 +77,16 @@ describe('exercise demos', () => {
     }
   });
 });
+
+describe('muscles', () => {
+  it('lists primary muscles for every exercise without overlap', async () => {
+    const { EXERCISE_MUSCLES, MUSCLES } = await import('./muscles');
+    const { EXERCISES } = await import('./pullup');
+    for (const key of Object.keys(EXERCISES) as (keyof typeof EXERCISES)[]) {
+      const t = EXERCISE_MUSCLES[key];
+      expect(t.primary.length).toBeGreaterThan(0);
+      for (const m of [...t.primary, ...t.secondary]) expect(MUSCLES[m]).toBeDefined();
+      expect(t.primary.filter((m) => t.secondary.includes(m))).toEqual([]);
+    }
+  });
+});

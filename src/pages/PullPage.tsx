@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { ExerciseDemo } from '../components/ExerciseDemo';
+import { MuscleChips } from '../components/MuscleChips';
+import { MuscleMap } from '../components/MuscleMap';
+import { EXERCISE_MUSCLES } from '../programs/muscles';
 import { Guide } from '../components/Guide';
 import { Icon } from '../components/Icon';
 import { PULL_GUIDE } from '../content/guides';
@@ -105,7 +108,11 @@ export function PullPage() {
               {preview === i && (
                 <div className="expreview">
                   <ExerciseDemo exercise={e.key} name={EXERCISES[e.key].name} size="sm" />
-                  <p className="muted small">{EXERCISES[e.key].cue}</p>
+                  <div className="stack-xs">
+                    <MuscleMap targets={EXERCISE_MUSCLES[e.key]} label={vi.muscles.mapLabel(EXERCISES[e.key].name)} />
+                    <MuscleChips targets={EXERCISE_MUSCLES[e.key]} />
+                  </div>
+                  <p className="muted small expcue">{EXERCISES[e.key].cue}</p>
                 </div>
               )}
             </li>
@@ -127,6 +134,7 @@ export function PullPage() {
           />
         )}
         <div className="runner-title">{title}</div>
+        {step && <MuscleChips targets={EXERCISE_MUSCLES[step.kind === 'rest' ? step.next.key : step.exercise.key]} compact />}
         <div>
           <div className="big">{big}</div>
           <div className="muted small">{unit}</div>

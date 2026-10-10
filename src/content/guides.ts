@@ -1,5 +1,7 @@
 // Guide content shown under each trainer. Plain paragraphs or bullet lists.
 
+import { MUSCLES } from '../programs/muscles';
+
 export interface GuideItem {
   title: string;
   paragraphs?: string[];
@@ -38,6 +40,13 @@ export const KEGEL_GUIDE: GuideItem[] = [
 ];
 
 export const PULL_GUIDE: GuideItem[] = [
+  {
+    title: 'Kéo xà tập những nhóm cơ nào?',
+    paragraphs: [
+      'Kéo xà là bài kéo thân người lên, chủ yếu do cơ lưng và tay đảm nhận. Trên hình minh họa, cơ chính tô màu đậm, cơ phụ tô màu nhạt.',
+    ],
+    bullets: Object.values(MUSCLES).map((m) => `${m.name} (${m.latin}): ${m.role}`),
+  },
   {
     title: 'Lịch tập cho người mới',
     bullets: [
