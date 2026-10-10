@@ -108,8 +108,8 @@ export function PullPage() {
               {preview === i && (
                 <div className="expreview">
                   <ExerciseDemo exercise={e.key} name={EXERCISES[e.key].name} size="sm" />
-                  <div className="stack-xs">
-                    <MuscleMap targets={EXERCISE_MUSCLES[e.key]} label={vi.muscles.mapLabel(EXERCISES[e.key].name)} />
+                  <MuscleMap targets={EXERCISE_MUSCLES[e.key]} label={vi.muscles.mapLabel(EXERCISES[e.key].name)} />
+                  <div className="expfull">
                     <MuscleChips targets={EXERCISE_MUSCLES[e.key]} />
                   </div>
                   <p className="muted small expcue">{EXERCISES[e.key].cue}</p>
