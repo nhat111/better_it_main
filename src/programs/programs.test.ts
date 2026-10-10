@@ -56,3 +56,24 @@ describe('pull-up', () => {
     expect(formatRest(120)).toBe('2 phút');
   });
 });
+
+describe('exercise demos', () => {
+  it('has a looping demo for every exercise', async () => {
+    const { DEMOS, demoDuration, poseAt } = await import('./demos');
+    const { EXERCISES } = await import('./pullup');
+    for (const key of Object.keys(EXERCISES) as (keyof typeof EXERCISES)[]) {
+      const d = DEMOS[key];
+      expect(d.frames.length).toBeGreaterThan(1);
+      const total = demoDuration(d);
+      // Seamless loop: the start and the end of the cycle are the same pose.
+      expect(poseAt(d, 0).pose.head[1]).toBeCloseTo(poseAt(d, total - 0.001).pose.head[1], 1);
+      // Every keyframe's own pose is reached during its hold.
+      let t = 0;
+      for (const f of d.frames) {
+        t += f.ms;
+        expect(poseAt(d, t + 1).pose).toEqual(f.hold > 1 ? f.pose : expect.anything());
+        t += f.hold;
+      }
+    }
+  });
+});

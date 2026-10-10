@@ -168,7 +168,7 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- pull-up list ---------- */
 .exlist { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
-.exlist li { display: grid; grid-template-columns: 24px 1fr auto; gap: 2px 10px; align-items: baseline; background: var(--bg); border-radius: 10px; padding: 10px 12px; }
+.exlist li { background: var(--bg); border-radius: 10px; }
 .exnum { font-family: var(--display); font-weight: 700; color: var(--accent); font-size: 1.2rem; }
 .exname { font-weight: 600; min-width: 0; }
 .exdose { font-family: var(--display); font-size: 1.15rem; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -198,3 +198,23 @@ a { color: inherit; text-decoration: none; }
 @media (prefers-reduced-motion: reduce) {
   .progress i, .ring-prog, .program { transition: none; }
 }
+
+/* ---------- exercise demos ---------- */
+.exrow { width: 100%; display: grid; grid-template-columns: 24px 1fr auto; gap: 2px 10px; align-items: baseline; text-align: left; background: none; border: 0; padding: 10px 12px; cursor: pointer; border-radius: 10px; }
+.exshow { color: var(--accent); font-weight: 600; }
+.expreview { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: center; padding: 0 12px 12px; }
+.expreview p { margin: 0; }
+.demo { margin: 0; display: grid; justify-items: center; gap: 4px; }
+.demo svg { display: block; width: 100%; height: auto; }
+.demo-md svg { width: min(170px, 46vw); }
+.demo-sm svg { width: 104px; }
+.demo-sm figcaption { max-width: 110px; }
+.demo figcaption { font-size: .78rem; color: var(--muted); text-align: center; min-height: 2.4em; }
+.demo-bar line { stroke: var(--muted); stroke-width: 3.5; stroke-linecap: round; }
+.demo-bar .demo-floor { stroke: var(--line); stroke-width: 2; }
+.demo-bar .demo-post { stroke-width: 2.5; }
+.demo-body line { stroke: var(--fg); stroke-width: 5; stroke-linecap: round; }
+.demo-body .demo-arm { stroke: var(--accent); }
+.demo-head { fill: var(--surface); stroke: var(--fg); stroke-width: 3.5; }
+.demo-band { fill: none; stroke: var(--warm); stroke-width: 2.5; stroke-linejoin: round; stroke-dasharray: 4 3; }
+@media (max-width: 380px) { .expreview { grid-template-columns: 1fr; justify-items: center; } }

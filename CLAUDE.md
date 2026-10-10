@@ -20,6 +20,8 @@ pull-up program. Same stack and conventions as KoDevTalk (github.com/nhat111/kor
 ## Structure
 - `src/pages/` Home, Kegel, Xà đơn, Tiến độ, Cài đặt (routes `/`, `/kegel`, `/xa-don`, `/tien-do`, `/cai-dat`)
 - `src/session/` `useKegelSession`, `usePullSession`
+- `src/programs/demos.ts` + `src/components/ExerciseDemo.tsx` animated stick-figure demos (one per
+  pull-up exercise; keyframe poses in a 120×140 box, eased and looped; static under reduced motion)
 - `src/lib/device.ts` beep, vibrate, screen wake lock
 - `sw/sw.js` service worker template; `vite.config.ts` injects precache list + version
 - `scripts/make_icons.py` renders `public/icons/*`

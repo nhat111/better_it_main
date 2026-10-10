@@ -78,6 +78,8 @@ export const vi = {
     startHold: 'Bắt đầu giữ',
     setDone: 'Xong hiệp',
     skipRest: 'Bỏ qua nghỉ',
+    showDemo: 'Xem động tác',
+    hideDemo: 'Ẩn',
     setLabel: (ex: number, set: number, of: number) => `Bài ${ex} · Hiệp ${set}/${of}`,
     rest: 'Nghỉ',
     restLabel: 'Nghỉ giữa hiệp',

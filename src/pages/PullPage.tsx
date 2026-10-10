@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ExerciseDemo } from '../components/ExerciseDemo';
 import { Guide } from '../components/Guide';
 import { Icon } from '../components/Icon';
 import { PULL_GUIDE } from '../content/guides';
@@ -15,6 +16,7 @@ export function PullPage() {
   const stage = STAGES[pull.stage];
   const [result, setResult] = useState<'done' | 'stopped' | null>(null);
   const [unlocked, setUnlocked] = useState<number | null>(null);
+  const [preview, setPreview] = useState<number | null>(null);
 
   const s = usePullSession(stage, () => {
     const { next, leveledUp } = completePull(getProgress(), dayKey(new Date()));
@@ -85,13 +87,27 @@ export function PullPage() {
         <ol className="exlist">
           {stage.exercises.map((e, i) => (
             <li key={`${e.key}-${i}`} className={i === current ? 'cur' : active && i < current ? 'ok' : ''}>
-              <span className="exnum">{i + 1}</span>
-              <span className="exname">{EXERCISES[e.key].name}</span>
-              <span className="exdose">{formatDose(e)}</span>
-              <span className="exdesc">
-                {e.tempo ? `${vi.pull.tempo(e.tempo)} · ` : ''}
-                {e.rest ? vi.pull.restBetween(formatRest(e.rest)) : vi.pull.lastHold}
-              </span>
+              <button
+                type="button"
+                className="exrow"
+                aria-expanded={preview === i}
+                onClick={() => setPreview(preview === i ? null : i)}
+              >
+                <span className="exnum">{i + 1}</span>
+                <span className="exname">{EXERCISES[e.key].name}</span>
+                <span className="exdose">{formatDose(e)}</span>
+                <span className="exdesc">
+                  {e.tempo ? `${vi.pull.tempo(e.tempo)} · ` : ''}
+                  {e.rest ? vi.pull.restBetween(formatRest(e.rest)) : vi.pull.lastHold}
+                  <span className="exshow"> · {preview === i ? vi.pull.hideDemo : vi.pull.showDemo}</span>
+                </span>
+              </button>
+              {preview === i && (
+                <div className="expreview">
+                  <ExerciseDemo exercise={e.key} name={EXERCISES[e.key].name} size="sm" />
+                  <p className="muted small">{EXERCISES[e.key].cue}</p>
+                </div>
+              )}
             </li>
           ))}
         </ol>
@@ -103,6 +119,13 @@ export function PullPage() {
           <i style={{ width: `${s.progress * 100}%` }} />
         </div>
         <div className="eyebrow">{eyebrow}</div>
+        {step && (
+          <ExerciseDemo
+            key={step.kind === 'rest' ? `next-${step.next.key}` : step.exercise.key}
+            exercise={step.kind === 'rest' ? step.next.key : step.exercise.key}
+            name={EXERCISES[step.kind === 'rest' ? step.next.key : step.exercise.key].name}
+          />
+        )}
         <div className="runner-title">{title}</div>
         <div>
           <div className="big">{big}</div>
