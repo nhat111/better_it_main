@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Guide } from '../components/Guide';
-import { Icon } from '../components/Icon';
+import { Roadmap } from '../components/Roadmap';
+import { SwitchNotice } from '../components/SwitchNotice';
 import { KEGEL_GUIDE } from '../content/guides';
 import { vi } from '../i18n/vi';
 import { dayKey } from '../lib/date';
@@ -13,6 +14,10 @@ const C = 2 * Math.PI * 45;
 export function KegelPage() {
   const { kegel } = useProgress();
   const level = KEGEL_LEVELS[kegel.level];
+  const [viewing, setViewing] = useState<number | null>(null);
+  const viewIdx = viewing ?? kegel.level;
+  const previewing = viewIdx !== kegel.level;
+  const shown = KEGEL_LEVELS[viewIdx];
   const [message, setMessage] = useState<{ done: boolean; text: string } | null>(null);
 
   const s = useKegelSession(level, () => {
@@ -25,45 +30,58 @@ export function KegelPage() {
     });
   });
 
-  const setLevel = (n: number) => update((p) => ({ ...p, kegel: { ...p.kegel, level: n, sessionsAtLevel: 0 } }));
+  const switchLevel = () => {
+    update((p) => ({ ...p, kegel: { ...p.kegel, level: viewIdx, sessionsAtLevel: 0 } }));
+    setViewing(null);
+  };
+  const view = (i: number) => setViewing(i === kegel.level ? null : i);
   const active = s.status !== 'idle';
   const t = s.phase?.type;
   const frac = s.pos?.fraction ?? 0;
   const scale = t && isSqueeze(t) ? 1 + 0.12 * frac : t && isRelax(t) ? 1.12 - 0.12 * frac : 1;
-  const min = kegelMinutes(level);
+  const min = kegelMinutes(shown);
   const last = kegel.level === KEGEL_LEVELS.length - 1;
 
   return (
     <div className="page">
       <section className="card" aria-labelledby="plan-h">
+        <Roadmap
+          label={vi.roadmap.kegelLabel}
+          items={KEGEL_LEVELS.map((l) => ({ title: l.name }))}
+          current={kegel.level}
+          viewing={viewIdx}
+          onView={view}
+          done={kegel.sessionsAtLevel}
+          need={KEGEL_SESSIONS_TO_LEVEL_UP}
+          disabled={active}
+        />
         <div className="row-between">
           <div>
-            <div className="eyebrow">{vi.kegel.eyebrow}</div>
+            <div className="eyebrow">{previewing ? vi.kegel.eyebrowPreview : vi.kegel.eyebrow} · ~{min} phút</div>
             <h1 id="plan-h" className="h2">
-              {vi.kegel.level(kegel.level + 1, level.name)}
+              {vi.kegel.level(viewIdx + 1, shown.name)}
             </h1>
           </div>
-          <div className="row">
-            <button className="icon-btn bordered" aria-label={vi.kegel.levelDown} disabled={active || kegel.level === 0} onClick={() => setLevel(kegel.level - 1)}>
-              <Icon name="minus" size={18} />
-            </button>
-            <button className="icon-btn bordered" aria-label={vi.kegel.levelUp} disabled={active || last} onClick={() => setLevel(kegel.level + 1)}>
-              <Icon name="plus" size={18} />
-            </button>
-          </div>
+          <span className={`chip ${previewing ? 'muted-chip' : 'warm'}`}>
+            {previewing ? vi.roadmap.preview : `${vi.roadmap.current} · ${vi.roadmap.sessions(kegel.sessionsAtLevel, KEGEL_SESSIONS_TO_LEVEL_UP)}`}
+          </span>
         </div>
         <div className="stats4">
-          <div><b>{level.hold}</b><span>{vi.kegel.holdS}</span></div>
-          <div><b>{level.rest}</b><span>{vi.kegel.restS}</span></div>
-          <div><b>{level.reps}</b><span>{vi.kegel.reps}</span></div>
-          <div><b>{level.quick}</b><span>{vi.kegel.quick}</span></div>
+          <div><b>{shown.hold}</b><span>{vi.kegel.holdS}</span></div>
+          <div><b>{shown.rest}</b><span>{vi.kegel.restS}</span></div>
+          <div><b>{shown.reps}</b><span>{vi.kegel.reps}</span></div>
+          <div><b>{shown.quick}</b><span>{vi.kegel.quick}</span></div>
         </div>
-        <p className="muted small">
-          {last ? vi.kegel.noteMax(min) : vi.kegel.note(kegel.sessionsAtLevel, KEGEL_SESSIONS_TO_LEVEL_UP, kegel.level + 2, min)}
-        </p>
+        {previewing ? (
+          <SwitchNotice what={vi.roadmap.levelName(viewIdx + 1)} done={kegel.sessionsAtLevel} onSwitch={switchLevel} onBack={() => view(kegel.level)} />
+        ) : (
+          <p className="muted small">
+            {last ? vi.kegel.noteMax(min) : vi.kegel.note(kegel.sessionsAtLevel, KEGEL_SESSIONS_TO_LEVEL_UP, kegel.level + 2, min)}
+          </p>
+        )}
       </section>
 
-      <section className={`card trainer ${t && isSqueeze(t) ? 'squeeze' : ''}`} aria-live="polite">
+      {!previewing && <section className={`card trainer ${t && isSqueeze(t) ? 'squeeze' : ''}`} aria-live="polite">
         <div className="ring">
           <svg viewBox="0 0 100 100" aria-hidden="true">
             <circle className="ring-track" cx="50" cy="50" r="45" />
@@ -105,7 +123,7 @@ export function KegelPage() {
           )}
         </div>
         {message && !message.done && !active && <p className="muted small">{vi.common.stopped}</p>}
-      </section>
+      </section>}
 
       <Guide items={KEGEL_GUIDE} />
     </div>

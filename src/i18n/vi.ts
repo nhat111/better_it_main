@@ -31,6 +31,7 @@ export const vi = {
   },
   kegel: {
     eyebrow: 'Bài hôm nay',
+    eyebrowPreview: 'Mỗi buổi',
     level: (n: number, name: string) => `Cấp ${n} · ${name}`,
     holdS: 'giây siết',
     restS: 'giây thả',
@@ -39,8 +40,6 @@ export const vi = {
     note: (done: number, need: number, next: number, min: number) =>
       `Đã xong ${done}/${need} buổi để mở cấp ${next}. Khoảng ${min} phút mỗi buổi.`,
     noteMax: (min: number) => `Cấp cao nhất. Duy trì đều đặn. Khoảng ${min} phút mỗi buổi.`,
-    levelDown: 'Giảm cấp',
-    levelUp: 'Tăng cấp',
     ready: 'Sẵn sàng',
     readyCue: 'Ngồi hoặc nằm thoải mái, thở đều. Bấm Bắt đầu khi sẵn sàng.',
     setsMeta: 'Hiệp 1: giữ lâu · Hiệp 2: nhịp nhanh',
@@ -66,8 +65,6 @@ export const vi = {
     note: (done: number, need: number, next: number) =>
       `Đã xong ${done}/${need} buổi để mở giai đoạn ${next}. 3 buổi/tuần, nghỉ 1 ngày giữa các buổi.`,
     noteMax: 'Giai đoạn cuối của lộ trình beginner. Kéo được 5 lần sạch liên tục là bạn đã sẵn sàng cho giáo án trung cấp.',
-    stageDown: 'Giai đoạn trước',
-    stageUp: 'Giai đoạn sau',
     tempo: (s: number) => `Mỗi lần hạ ${s} giây`,
     restBetween: (r: string) => `Nghỉ ${r} giữa hiệp`,
     lastHold: 'Hiệp cuối, treo lâu nhất có thể',
@@ -91,6 +88,19 @@ export const vi = {
     done: 'Xong buổi xà đơn!',
     doneCue: 'Giãn cơ lưng, vai 3–5 phút. Nghỉ ít nhất 1 ngày trước buổi sau.',
     unlocked: (n: number) => `Đã mở giai đoạn ${n}.`,
+  },
+  roadmap: {
+    sessions: (done: number, need: number) => `${done}/${need} buổi`,
+    current: 'Đang tập',
+    preview: 'Xem trước',
+    previewing: (what: string) => `Bạn đang xem trước ${what}. Tiến độ hiện tại chưa thay đổi.`,
+    switchTo: (what: string) => `Chuyển sang ${what}`,
+    back: 'Về mức đang tập',
+    resetNote: (done: number) => `Nếu chuyển, ${done} buổi đã tập ở mức hiện tại sẽ được tính lại từ đầu.`,
+    pullLabel: 'Lộ trình xà đơn',
+    kegelLabel: 'Các cấp Kegel',
+    stageName: (n: number) => `giai đoạn ${n}`,
+    levelName: (n: number) => `cấp ${n}`,
   },
   muscles: {
     primary: 'Cơ chính',

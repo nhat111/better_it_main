@@ -4,7 +4,8 @@ import { MuscleChips } from '../components/MuscleChips';
 import { MuscleMap } from '../components/MuscleMap';
 import { EXERCISE_MUSCLES } from '../programs/muscles';
 import { Guide } from '../components/Guide';
-import { Icon } from '../components/Icon';
+import { Roadmap } from '../components/Roadmap';
+import { SwitchNotice } from '../components/SwitchNotice';
 import { PULL_GUIDE } from '../content/guides';
 import { vi } from '../i18n/vi';
 import { dayKey } from '../lib/date';
@@ -16,7 +17,11 @@ const doseText = (e: StageExercise) => (e.hold ? `${e.hold} ${vi.pull.seconds}` 
 
 export function PullPage() {
   const { pull } = useProgress();
+  const [viewing, setViewing] = useState<number | null>(null);
+  const viewIdx = viewing ?? pull.stage;
+  const previewing = viewIdx !== pull.stage;
   const stage = STAGES[pull.stage];
+  const shown = STAGES[viewIdx];
   const [result, setResult] = useState<'done' | 'stopped' | null>(null);
   const [unlocked, setUnlocked] = useState<number | null>(null);
   const [preview, setPreview] = useState<number | null>(null);
@@ -29,7 +34,15 @@ export function PullPage() {
   });
 
   const active = s.mode !== 'idle';
-  const setStage = (n: number) => update((p) => ({ ...p, pull: { ...p.pull, stage: n, sessionsAtStage: 0 } }));
+  const switchStage = () => {
+    update((p) => ({ ...p, pull: { ...p.pull, stage: viewIdx, sessionsAtStage: 0 } }));
+    setViewing(null);
+    setPreview(null);
+  };
+  const view = (i: number) => {
+    setViewing(i === pull.stage ? null : i);
+    setPreview(null);
+  };
   const last = pull.stage === STAGES.length - 1;
   const current = s.step?.exerciseIndex ?? -1;
   const step = s.step;
@@ -71,25 +84,30 @@ export function PullPage() {
   return (
     <div className="page">
       <section className="card" aria-labelledby="stage-h">
+        <Roadmap
+          label={vi.roadmap.pullLabel}
+          items={STAGES.map((st) => ({ title: st.name, sub: st.weeks }))}
+          current={pull.stage}
+          viewing={viewIdx}
+          onView={view}
+          done={pull.sessionsAtStage}
+          need={PULL_SESSIONS_TO_STAGE_UP}
+          disabled={active}
+        />
         <div className="row-between">
           <div>
-            <div className="eyebrow">{vi.pull.eyebrow(stage.weeks)} · ~{stageMinutes(stage)} phút</div>
+            <div className="eyebrow">{vi.pull.eyebrow(shown.weeks)} · ~{stageMinutes(shown)} phút</div>
             <h1 id="stage-h" className="h2">
-              {vi.pull.stage(pull.stage + 1, stage.name)}
+              {vi.pull.stage(viewIdx + 1, shown.name)}
             </h1>
           </div>
-          <div className="row">
-            <button className="icon-btn bordered" aria-label={vi.pull.stageDown} disabled={active || pull.stage === 0} onClick={() => setStage(pull.stage - 1)}>
-              <Icon name="minus" size={18} />
-            </button>
-            <button className="icon-btn bordered" aria-label={vi.pull.stageUp} disabled={active || last} onClick={() => setStage(pull.stage + 1)}>
-              <Icon name="plus" size={18} />
-            </button>
-          </div>
+          <span className={`chip ${previewing ? 'muted-chip' : 'warm'}`}>
+            {previewing ? vi.roadmap.preview : `${vi.roadmap.current} · ${vi.roadmap.sessions(pull.sessionsAtStage, PULL_SESSIONS_TO_STAGE_UP)}`}
+          </span>
         </div>
         <ol className="exlist">
-          {stage.exercises.map((e, i) => (
-            <li key={`${e.key}-${i}`} className={i === current ? 'cur' : active && i < current ? 'ok' : ''}>
+          {shown.exercises.map((e, i) => (
+            <li key={`${viewIdx}-${e.key}-${i}`} className={i === current ? 'cur' : active && i < current ? 'ok' : ''}>
               <button
                 type="button"
                 className="exrow"
@@ -118,10 +136,14 @@ export function PullPage() {
             </li>
           ))}
         </ol>
-        <p className="muted small">{last ? vi.pull.noteMax : vi.pull.note(pull.sessionsAtStage, PULL_SESSIONS_TO_STAGE_UP, pull.stage + 2)}</p>
+        {previewing ? (
+          <SwitchNotice what={vi.roadmap.stageName(viewIdx + 1)} done={pull.sessionsAtStage} onSwitch={switchStage} onBack={() => view(pull.stage)} />
+        ) : (
+          <p className="muted small">{last ? vi.pull.noteMax : vi.pull.note(pull.sessionsAtStage, PULL_SESSIONS_TO_STAGE_UP, pull.stage + 2)}</p>
+        )}
       </section>
 
-      <section className={`card trainer ${s.mode === 'resting' ? 'resting' : active ? 'working' : ''}`} aria-live="polite">
+      {!previewing && <section className={`card trainer ${s.mode === 'resting' ? 'resting' : active ? 'working' : ''}`} aria-live="polite">
         <div className="progress" aria-hidden="true">
           <i style={{ width: `${s.progress * 100}%` }} />
         </div>
@@ -158,7 +180,7 @@ export function PullPage() {
             </button>
           )}
         </div>
-      </section>
+      </section>}
 
       <Guide items={PULL_GUIDE} />
     </div>
