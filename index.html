@@ -1,248 +1,30 @@
 <!doctype html>
 <html lang="vi">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1f6f8b">
-<title>Kegel Coach</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Be+Vietnam+Pro:wght@400;500;600&display=swap">
-<style>
-/* Layout: one-column training console — plan card, breathing ring timer, streak grid, guide */
-:root{
-  --bg:#eef1f4; --surface:#ffffff; --fg:#17222c; --muted:#5b6b78; --line:#d5dce2;
-  --accent:#1f6f8b; --accent-soft:#d6e9f0; --warm:#c7741f; --good:#2f8a57;
-  --display:"Barlow Condensed","Arial Narrow",sans-serif;
-  --body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
-}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0f161c; --surface:#17212a; --fg:#e4ebf0; --muted:#8fa0ad; --line:#26333e;
-  --accent:#5bb3d2; --accent-soft:#1b3442; --warm:#e39a4f; --good:#5cc489; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0f161c; --surface:#17212a; --fg:#e4ebf0; --muted:#8fa0ad; --line:#26333e;
-  --accent:#5bb3d2; --accent-soft:#1b3442; --warm:#e39a4f; --good:#5cc489; color-scheme:dark}
-*{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55;margin:0;padding:0 16px}
-main{max-width:560px;margin:0 auto;padding-block:20px 48px;display:grid;gap:18px}
-h1,h2{font-family:var(--display);text-wrap:balance;margin:0;letter-spacing:.01em}
-h1{font-size:2.1rem;font-weight:700;line-height:1}
-h2{font-size:1.35rem;font-weight:600}
-.eyebrow{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:600}
-header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
-.streak{font-family:var(--display);font-size:1.1rem;color:var(--warm);font-weight:600}
-section{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
-.plan{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px;text-align:center}
-.plan div{background:var(--bg);border-radius:10px;padding:10px 4px}
-.plan b{display:block;font-family:var(--display);font-size:1.6rem;font-variant-numeric:tabular-nums;line-height:1.1}
-.plan span{font-size:.72rem;color:var(--muted)}
-.lvlrow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.lvlpick{display:flex;gap:6px;align-items:center}
-button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:8px 14px}
-button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.primary{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:600;padding:12px 22px;font-size:1rem}
-.ghost{background:transparent}
-.sm{padding:4px 10px}
-.trainer{display:grid;justify-items:center;gap:14px;text-align:center}
-.ring{position:relative;width:min(260px,72vw);aspect-ratio:1;max-width:100%}
-.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
-.ring .track{stroke:var(--line);fill:none}
-.ring .prog{stroke:var(--accent);fill:none;stroke-linecap:round;transition:stroke .3s}
-.core{position:absolute;inset:18%;border-radius:50%;background:var(--accent-soft);display:grid;place-content:center;transition:transform .25s linear,background .3s}
-.phase{font-family:var(--display);font-size:2rem;font-weight:700;line-height:1;text-transform:uppercase}
-.count{font-family:var(--display);font-size:3.2rem;font-weight:600;font-variant-numeric:tabular-nums;line-height:1}
-.cue{color:var(--muted);min-height:3em;max-width:34ch}
-.meta{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
-.controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-.squeeze .prog{stroke:var(--warm)}
-.squeeze .core{background:color-mix(in srgb,var(--warm) 22%,var(--surface))}
-.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px}
-.cal div{aspect-ratio:1;border-radius:8px;background:var(--bg);display:grid;place-content:center;font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
-.cal .d1{background:var(--accent-soft);color:var(--fg)}
-.cal .d2{background:var(--accent);color:var(--surface);font-weight:600}
-.cal .today{outline:2px solid var(--warm)}
-.legend{font-size:.75rem;color:var(--muted);margin-top:8px}
-details{border-top:1px solid var(--line);padding-block:10px}
-details:first-of-type{border-top:0}
-summary{cursor:pointer;font-weight:600}
-details p,details li{color:var(--muted);margin:.4em 0}
-ul{padding-left:1.1em;margin:.3em 0}
-.note{font-size:.8rem;color:var(--muted)}
-.toast{color:var(--good);font-weight:600}
-@media (prefers-reduced-motion:reduce){.core{transition:none}}
-</style>
-</head>
-<body>
-
-<main>
-  <header>
-    <div>
-      <div class="eyebrow">Luyện cơ sàn chậu cho nam</div>
-      <h1>Kegel Coach</h1>
-    </div>
-    <div class="streak" id="streak">Chuỗi 0 ngày</div>
-  </header>
-
-  <section aria-labelledby="planH">
-    <div class="lvlrow">
-      <div><div class="eyebrow">Bài hôm nay</div><h2 id="planH">Cấp 1 · Làm quen</h2></div>
-      <div class="lvlpick">
-        <button class="sm" id="lvDown" aria-label="Giảm cấp">−</button>
-        <button class="sm" id="lvUp" aria-label="Tăng cấp">+</button>
-      </div>
-    </div>
-    <div class="plan">
-      <div><b id="pHold">3</b><span>giây siết</span></div>
-      <div><b id="pRest">3</b><span>giây thả</span></div>
-      <div><b id="pReps">10</b><span>lần giữ</span></div>
-      <div><b id="pQuick">10</b><span>nhịp nhanh</span></div>
-    </div>
-    <p class="note" id="lvlNote" style="margin:10px 0 0">Hoàn thành 3 buổi ở cấp này để mở cấp tiếp theo. Tổng thời gian khoảng 2 phút.</p>
-  </section>
-
-  <section class="trainer" id="trainer" aria-live="polite">
-    <div class="ring">
-      <svg viewBox="0 0 100 100" aria-hidden="true">
-        <circle class="track" cx="50" cy="50" r="45" stroke-width="5"></circle>
-        <circle class="prog" id="prog" cx="50" cy="50" r="45" stroke-width="5" stroke-dasharray="282.74" stroke-dashoffset="282.74"></circle>
-      </svg>
-      <div class="core" id="core">
-        <div class="phase" id="phase">Sẵn sàng</div>
-        <div class="count" id="count">—</div>
-      </div>
-    </div>
-    <div class="cue" id="cue">Ngồi hoặc nằm thoải mái, thở đều. Bấm Bắt đầu khi sẵn sàng.</div>
-    <div class="meta" id="meta">Hiệp 1: giữ lâu · Hiệp 2: nhịp nhanh</div>
-    <div class="controls">
-      <button class="primary" id="start">Bắt đầu</button>
-      <button class="ghost" id="pause" hidden>Tạm dừng</button>
-      <button class="ghost" id="stop" hidden>Kết thúc</button>
-      <button class="ghost" id="sound" aria-pressed="true">Âm báo: bật</button>
-    </div>
-  </section>
-
-  <section aria-labelledby="calH">
-    <div class="eyebrow">28 ngày gần nhất</div>
-    <h2 id="calH">Nhật ký tập</h2>
-    <div class="cal" id="cal"></div>
-    <div class="legend">Nhạt: 1 buổi · Đậm: từ 2 buổi · Khuyến nghị 2–3 buổi mỗi ngày.</div>
-  </section>
-
-  <section aria-labelledby="guideH">
-    <h2 id="guideH" style="margin-bottom:6px">Hướng dẫn</h2>
-    <details open>
-      <summary>Tìm đúng nhóm cơ</summary>
-      <p>Cơ sàn chậu là nhóm cơ bạn dùng để nín tiểu giữa chừng hoặc nín xì hơi. Khi siết đúng, bạn thấy vùng giữa bìu và hậu môn kéo lên vào trong, dương vật hơi nhích lên.</p>
-      <p>Chỉ dùng mẹo nín tiểu để nhận biết cơ một hai lần. Không tập thường xuyên khi đang đi tiểu.</p>
-    </details>
-    <details>
-      <summary>Kỹ thuật đúng</summary>
-      <ul>
-        <li>Giữ bụng, mông và đùi thả lỏng. Chỉ cơ sàn chậu làm việc.</li>
-        <li>Thở bình thường, không nín thở khi siết.</li>
-        <li>Pha Thả quan trọng như pha Siết. Thả hết hoàn toàn trước lần tiếp theo.</li>
-        <li>Mới tập nên nằm. Khi quen, chuyển sang ngồi rồi đứng.</li>
-      </ul>
-    </details>
-    <details>
-      <summary>Lộ trình và kỳ vọng</summary>
-      <p>Tập 2–3 buổi mỗi ngày. Đa số nghiên cứu ghi nhận cải thiện khả năng kiểm soát xuất tinh và độ cương sau khoảng 6–12 tuần tập đều. Đừng lên cấp quá nhanh: cơ mỏi sẽ siết sai.</p>
-    </details>
-    <details>
-      <summary>Khi nào nên đi khám</summary>
-      <p>Dừng tập và gặp bác sĩ nam khoa hoặc tiết niệu nếu bị đau vùng chậu, đau khi tiểu, tiểu khó, hoặc rối loạn cương kéo dài. Rối loạn cương có thể là dấu hiệu sớm của bệnh tim mạch, tiểu đường. Ứng dụng này hỗ trợ luyện tập, không thay thế chẩn đoán y khoa.</p>
-    </details>
-  </section>
-</main>
-
-<script>
-const LEVELS=[
- {n:"Làm quen",h:3,r:3,reps:10,q:10},{n:"Khởi động",h:4,r:4,reps:10,q:10},
- {n:"Nền tảng",h:5,r:5,reps:12,q:12},{n:"Tăng sức",h:6,r:6,reps:12,q:15},
- {n:"Bền bỉ",h:8,r:8,reps:12,q:15},{n:"Kiểm soát",h:10,r:10,reps:10,q:20},
- {n:"Nâng cao",h:12,r:10,reps:10,q:20},{n:"Thành thạo",h:15,r:10,reps:10,q:25}];
-const NEED=3, KEY="kegelCoach.v1";
-let S={level:0,lvlDone:0,log:{}};
-try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&typeof s.level==="number")S=Object.assign(S,s)}catch(e){}
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
-const $=id=>document.getElementById(id);
-const dk=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
-
-function renderPlan(){
-  const L=LEVELS[S.level];
-  $("planH").textContent=`Cấp ${S.level+1} · ${L.n}`;
-  $("pHold").textContent=L.h;$("pRest").textContent=L.r;$("pReps").textContent=L.reps;$("pQuick").textContent=L.q;
-  const secs=3+L.reps*(L.h+L.r)+8+L.q*2, min=Math.round(secs/60*2)/2;
-  $("lvlNote").textContent=S.level===LEVELS.length-1
-    ? `Cấp cao nhất. Duy trì đều đặn. Khoảng ${min} phút mỗi buổi.`
-    : `Đã xong ${S.lvlDone}/${NEED} buổi để mở cấp ${S.level+2}. Khoảng ${min} phút mỗi buổi.`;
-  $("lvDown").disabled=S.level===0;$("lvUp").disabled=S.level===LEVELS.length-1;
-}
-function renderCal(){
-  const c=$("cal");c.innerHTML="";const t=new Date();
-  for(let i=27;i>=0;i--){const d=new Date(t);d.setDate(t.getDate()-i);const n=S.log[dk(d)]||0;
-    const el=document.createElement("div");el.textContent=d.getDate();
-    if(n===1)el.className="d1";if(n>=2)el.className="d2";if(i===0)el.classList.add("today");
-    el.title=`${d.getDate()}/${d.getMonth()+1}: ${n} buổi`;c.appendChild(el);}
-  let st=0;const d=new Date();if(!S.log[dk(d)])d.setDate(d.getDate()-1);
-  while(S.log[dk(d)]){st++;d.setDate(d.getDate()-1)}
-  $("streak").textContent=`Chuỗi ${st} ngày`;
-}
-$("lvDown").onclick=()=>{if(S.level>0){S.level--;S.lvlDone=0;save();renderPlan()}};
-$("lvUp").onclick=()=>{if(S.level<LEVELS.length-1){S.level++;S.lvlDone=0;save();renderPlan()}};
-
-/* audio */
-let ac=null,soundOn=true;
-function beep(f,len=.12){if(!soundOn)return;try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();
-  const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;o.connect(g);g.connect(ac.destination);
-  g.gain.setValueAtTime(.0001,ac.currentTime);g.gain.exponentialRampToValueAtTime(.2,ac.currentTime+.02);
-  g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+len);o.start();o.stop(ac.currentTime+len+.02)}catch(e){}}
-$("sound").onclick=e=>{soundOn=!soundOn;e.target.textContent="Âm báo: "+(soundOn?"bật":"tắt");e.target.setAttribute("aria-pressed",soundOn)};
-
-/* session */
-const CUES={prep:"Thả lỏng bụng và mông. Thở đều.",squeeze:"Siết và kéo cơ sàn chậu lên. Vẫn thở bình thường.",
- relax:"Thả hoàn toàn. Cảm nhận cơ giãn ra.",brk:"Nghỉ ngắn. Chuẩn bị nhịp nhanh.",
- flick:"Siết nhanh!",frelax:"Thả nhanh."};
-const LABEL={prep:"Chuẩn bị",squeeze:"Siết",relax:"Thả",brk:"Nghỉ",flick:"Siết",frelax:"Thả"};
-let phases=[],pi=0,pStart=0,paused=false,pauseAt=0,raf=0,wake=null;
-function build(){const L=LEVELS[S.level];const p=[{t:"prep",d:3}];
-  for(let i=1;i<=L.reps;i++){p.push({t:"squeeze",d:L.h,set:1,i,n:L.reps});p.push({t:"relax",d:L.r,set:1,i,n:L.reps})}
-  p.push({t:"brk",d:8});
-  for(let i=1;i<=L.q;i++){p.push({t:"flick",d:1,set:2,i,n:L.q});p.push({t:"frelax",d:1,set:2,i,n:L.q})}
-  return p}
-const C=282.74;
-function show(ph,left,frac){
-  const tr=$("trainer"),sq=ph.t==="squeeze"||ph.t==="flick";tr.classList.toggle("squeeze",sq);
-  $("phase").textContent=LABEL[ph.t];$("count").textContent=Math.ceil(left);
-  $("prog").style.strokeDashoffset=C*(1-frac);
-  const s=sq?1+.12*frac:(ph.t==="relax"||ph.t==="frelax"?1.12-.12*frac:1);
-  $("core").style.transform=`scale(${s.toFixed(3)})`;
-}
-function enter(i){pi=i;pStart=performance.now();const ph=phases[i];
-  $("cue").textContent=CUES[ph.t];
-  $("meta").textContent=ph.set?`Hiệp ${ph.set} (${ph.set===1?"giữ lâu":"nhịp nhanh"}) · lần ${ph.i}/${ph.n}`:"";
-  if(ph.t==="squeeze"||ph.t==="flick")beep(660);else if(ph.t!=="prep")beep(440);}
-function tick(now){if(paused)return;const ph=phases[pi],el=(now-pStart)/1000;
-  if(el>=ph.d){if(pi+1>=phases.length)return finish();enter(pi+1);return raf=requestAnimationFrame(tick)}
-  show(ph,ph.d-el,el/ph.d);raf=requestAnimationFrame(tick)}
-async function start(){phases=build();paused=false;
-  $("start").hidden=true;$("pause").hidden=false;$("stop").hidden=false;$("pause").textContent="Tạm dừng";
-  try{wake=await navigator.wakeLock?.request("screen")}catch(e){wake=null}
-  beep(520);enter(0);raf=requestAnimationFrame(tick)}
-function reset(msg){cancelAnimationFrame(raf);try{wake?.release()}catch(e){}wake=null;
-  $("start").hidden=false;$("pause").hidden=true;$("stop").hidden=true;$("trainer").classList.remove("squeeze");
-  $("phase").textContent="Sẵn sàng";$("count").textContent="—";$("prog").style.strokeDashoffset=C;$("core").style.transform="";
-  $("cue").innerHTML=msg;$("meta").textContent="Hiệp 1: giữ lâu · Hiệp 2: nhịp nhanh";}
-function finish(){const k=dk(new Date());S.log[k]=(S.log[k]||0)+1;S.lvlDone++;let up="";
-  if(S.lvlDone>=NEED&&S.level<LEVELS.length-1){S.level++;S.lvlDone=0;up=` Đã mở <b>cấp ${S.level+1}</b>.`}
-  save();renderPlan();renderCal();beep(880,.3);
-  reset(`<span class="toast">Xong buổi tập!</span> Hôm nay: ${S.log[k]} buổi.${up}`);
-  $("start").textContent="Tập buổi nữa";}
-$("start").onclick=start;
-$("stop").onclick=()=>reset("Đã dừng. Buổi này chưa được tính.");
-$("pause").onclick=()=>{if(!paused){paused=true;pauseAt=performance.now();cancelAnimationFrame(raf);$("pause").textContent="Tiếp tục";$("cue").textContent="Đang tạm dừng."}
-  else{paused=false;pStart+=performance.now()-pauseAt;$("pause").textContent="Tạm dừng";$("cue").textContent=CUES[phases[pi].t];raf=requestAnimationFrame(tick)}};
-
-renderPlan();renderCal();
-</script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="description"
+      content="Tập Kegel và lộ trình xà đơn cho người mới, có đồng hồ hướng dẫn từng nhịp. Miễn phí, không cần tài khoản, dùng được offline."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ManFit" />
+    <meta property="og:title" content="ManFit · Kegel và xà đơn cho quý ông" />
+    <meta property="og:description" content="Đồng hồ Kegel 8 cấp độ và lộ trình 8 tuần đến pull-up đầu tiên. Miễn phí, dùng ngay trên điện thoại." />
+    <meta property="og:locale" content="vi_VN" />
+    <meta name="theme-color" content="#1f6f8b" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#17212a" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="ManFit" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <title>ManFit · Kegel và xà đơn</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
