@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { beep, keepAwake, TONE, vibrate } from '../lib/device';
+import { beep, sessionActive, TONE, vibrate } from '../lib/device';
 import { buildKegelPhases, isRelax, isSqueeze, phaseAt, type KegelLevel, type PhasePosition } from '../programs/kegel';
 
 export type KegelStatus = 'idle' | 'running' | 'paused';
@@ -23,7 +23,7 @@ export function useKegelSession(level: KegelLevel, onComplete: () => void) {
 
   const cleanup = useCallback(() => {
     cancelAnimationFrame(rafRef.current);
-    keepAwake(false);
+    sessionActive(false);
   }, []);
 
   const frameRef = useRef<(now: number) => void>(() => undefined);
@@ -60,8 +60,7 @@ export function useKegelSession(level: KegelLevel, onComplete: () => void) {
     lastIndexRef.current = -1;
     startRef.current = performance.now();
     setStatus('running');
-    keepAwake(true);
-    beep(TONE.start);
+    sessionActive(true);
     rafRef.current = requestAnimationFrame(frame);
   }, [frame]);
 

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { beep, keepAwake, TONE, vibrate } from '../lib/device';
+import { beep, sessionActive, TONE, vibrate } from '../lib/device';
 import { buildPullSteps, type Stage } from '../programs/pullup';
 
 /**
@@ -48,7 +48,7 @@ export function usePullSession(stage: Stage, onComplete: () => void) {
     (i: number) => {
       if (i >= steps.length) {
         clear();
-        keepAwake(false);
+        sessionActive(false);
         setMode('idle');
         setIndex(0);
         beep(TONE.done, 0.3);
@@ -77,8 +77,7 @@ export function usePullSession(stage: Stage, onComplete: () => void) {
   }, [goTo]);
 
   const begin = useCallback(() => {
-    keepAwake(true);
-    beep(TONE.start);
+    sessionActive(true);
     goTo(0);
   }, [goTo]);
 
@@ -108,14 +107,14 @@ export function usePullSession(stage: Stage, onComplete: () => void) {
 
   const stop = useCallback(() => {
     clear();
-    keepAwake(false);
+    sessionActive(false);
     setMode('idle');
     setIndex(0);
   }, []);
 
   useEffect(() => () => {
     clear();
-    keepAwake(false);
+    sessionActive(false);
   }, []);
 
   const workTotal = steps.filter((s) => s.kind === 'work').length;
