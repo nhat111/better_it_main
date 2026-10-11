@@ -17,6 +17,23 @@ export const KEGEL_GUIDE: GuideItem[] = [
     ],
   },
   {
+    title: 'Một buổi gồm những gì?',
+    bullets: [
+      'Giữ lâu: siết và giữ vài giây. Luyện sức bền của cơ.',
+      'Thang máy (từ cấp 3): siết dần 3 tầng (khoảng 1/3, 2/3 rồi hết sức), sau đó thả từng tầng. Luyện khả năng điều chỉnh lực siết, quan trọng cho việc kiểm soát.',
+      'Nhịp nhanh: siết và thả liên tục mỗi giây. Luyện phản xạ siết kịp lúc.',
+      'Thả giãn: 6 nhịp thở bụng chậm, để sàn chậu giãn ra hoàn toàn. Biết thả lỏng cũng là một kỹ năng; cơ chỉ siết mà không biết thả sẽ dễ căng và mỏi.',
+    ],
+  },
+  {
+    title: 'Tư thế theo cấp',
+    bullets: [
+      'Cấp 1–3: nằm ngửa, co gối. Dễ cảm nhận cơ nhất vì không phải chống trọng lực.',
+      'Cấp 4–5: ngồi thẳng lưng, hai chân chạm sàn.',
+      'Cấp 6–8: đứng thẳng. Khi đã quen, tập siết nhẹ ngay trước lúc ho, hắt hơi hoặc nâng đồ nặng.',
+    ],
+  },
+  {
     title: 'Kỹ thuật đúng',
     bullets: [
       'Giữ bụng, mông và đùi thả lỏng. Chỉ cơ sàn chậu làm việc.',
@@ -28,7 +45,14 @@ export const KEGEL_GUIDE: GuideItem[] = [
   {
     title: 'Lộ trình và kỳ vọng',
     paragraphs: [
-      'Tập 2–3 buổi mỗi ngày. Đa số nghiên cứu ghi nhận cải thiện khả năng kiểm soát xuất tinh và độ cương sau khoảng 6–12 tuần tập đều. Đừng lên cấp quá nhanh: cơ mỏi sẽ siết sai.',
+      'Tập 2–3 buổi mỗi ngày (từ cấp 6, buổi dài hơn nên 2 buổi là đủ). Đa số nghiên cứu ghi nhận cải thiện khả năng kiểm soát xuất tinh và độ cương sau khoảng 6–12 tuần tập đều. Đừng lên cấp quá nhanh: cơ mỏi sẽ siết sai.',
+    ],
+  },
+  {
+    title: 'Dấu hiệu sàn chậu đang căng quá',
+    paragraphs: [
+      'Không phải ai cũng bị cơ sàn chậu yếu; một số người lại bị căng quá. Nếu bạn thấy đau hoặc tức vùng chậu, đáy chậu, tinh hoàn, đau khi hoặc sau xuất tinh, tiểu khó, dòng tiểu yếu, hoặc rất khó cảm nhận lúc cơ thả ra, hãy tạm ngừng các phần siết.',
+      'Lúc đó chỉ tập phần Thả giãn và đi khám bác sĩ tiết niệu, nam khoa hoặc chuyên viên vật lý trị liệu sàn chậu. Không tăng cấp khi đang có các dấu hiệu này.',
     ],
   },
   {

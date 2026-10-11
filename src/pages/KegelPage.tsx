@@ -5,7 +5,7 @@ import { SwitchNotice } from '../components/SwitchNotice';
 import { KEGEL_GUIDE } from '../content/guides';
 import { vi } from '../i18n/vi';
 import { dayKey } from '../lib/date';
-import { isRelax, isSqueeze, KEGEL_LEVELS, KEGEL_SESSIONS_TO_LEVEL_UP, kegelMinutes } from '../programs/kegel';
+import { BREATHS, isSqueeze, KEGEL_LEVELS, KEGEL_SESSIONS_TO_LEVEL_UP, kegelMinutes, kegelParts, phaseScale } from '../programs/kegel';
 import { useKegelSession } from '../session/useKegelSession';
 import { completeKegel, getProgress, setProgress, update, useProgress } from '../storage/progress';
 
@@ -38,7 +38,11 @@ export function KegelPage() {
   const active = s.status !== 'idle';
   const t = s.phase?.type;
   const frac = s.pos?.fraction ?? 0;
-  const scale = t && isSqueeze(t) ? 1 + 0.12 * frac : t && isRelax(t) ? 1.12 - 0.12 * frac : 1;
+  const scale = t ? phaseScale(t, frac) : 1;
+  const parts = kegelParts(level);
+  const partNames = parts.map((p) => vi.kegel.partNames[p]);
+  const nextPart = s.pos ? s.phases[s.pos.index + 1]?.part : undefined;
+  const posture = vi.kegel.posture[level.posture];
   const min = kegelMinutes(shown);
   const last = kegel.level === KEGEL_LEVELS.length - 1;
 
@@ -66,11 +70,15 @@ export function KegelPage() {
             {previewing ? vi.roadmap.preview : `${vi.roadmap.current} · ${vi.roadmap.sessions(kegel.sessionsAtLevel, KEGEL_SESSIONS_TO_LEVEL_UP)}`}
           </span>
         </div>
+        <p className="posture">{vi.kegel.postureLine(vi.kegel.posture[shown.posture])}</p>
         <div className="stats4">
-          <div><b>{shown.hold}</b><span>{vi.kegel.holdS}</span></div>
-          <div><b>{shown.rest}</b><span>{vi.kegel.restS}</span></div>
-          <div><b>{shown.reps}</b><span>{vi.kegel.reps}</span></div>
-          <div><b>{shown.quick}</b><span>{vi.kegel.quick}</span></div>
+          <div><b>{shown.reps}×{shown.hold}s</b><span>{vi.kegel.tiles.hold}</span></div>
+          <div className={shown.elevator ? '' : 'tile-off'}>
+            <b>{shown.elevator ? vi.kegel.times(shown.elevator) : '—'}</b>
+            <span>{shown.elevator ? vi.kegel.tiles.elevator : `${vi.kegel.tiles.elevator} ${vi.kegel.elevatorLocked}`}</span>
+          </div>
+          <div><b>{shown.quick}</b><span>{vi.kegel.tiles.quick}</span></div>
+          <div><b>{BREATHS}</b><span>{vi.kegel.tiles.relaxation}</span></div>
         </div>
         {previewing ? (
           <SwitchNotice what={vi.roadmap.levelName(viewIdx + 1)} done={kegel.sessionsAtLevel} onSwitch={switchLevel} onBack={() => view(kegel.level)} />
@@ -96,17 +104,17 @@ export function KegelPage() {
           {s.status === 'paused' ? (
             vi.kegel.paused
           ) : t ? (
-            vi.kegel.cue[t]
+            t === 'break' && nextPart ? vi.kegel.breakCue(vi.kegel.partNames[nextPart]) : vi.kegel.cue[t]
           ) : message?.done ? (
             <>
               <strong className="good">{vi.kegel.done}</strong> {message.text}
             </>
           ) : (
-            vi.kegel.readyCue
+            vi.kegel.readyCue(posture)
           )}
         </p>
         <p className="meta">
-          {s.phase?.set ? vi.kegel.setMeta(s.phase.set, s.phase.rep!, s.phase.of!) : active ? ' ' : vi.kegel.setsMeta}
+          {s.phase?.part ? vi.kegel.partMeta(parts.indexOf(s.phase.part) + 1, parts.length, vi.kegel.partNames[s.phase.part], s.phase.rep!, s.phase.of!) : active ? ' ' : vi.kegel.partsMeta(partNames)}
         </p>
         <div className="row center">
           {!active && (

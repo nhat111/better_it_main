@@ -1,17 +1,48 @@
 import { describe, expect, it } from 'vitest';
-import { buildKegelPhases, KEGEL_LEVELS, kegelMinutes, phaseAt, totalSeconds } from './kegel';
+import { BREATH_IN, BREATH_OUT, BREATHS, buildKegelPhases, KEGEL_LEVELS, kegelMinutes, kegelParts, phaseAt, phaseScale, totalSeconds } from './kegel';
 import { buildPullSteps, formatDose, formatRest, STAGES } from './pullup';
 
 describe('kegel', () => {
   const level = KEGEL_LEVELS[0];
   const phases = buildKegelPhases(level);
 
-  it('builds prep, long holds, a break, then quick flicks', () => {
+  it('level 1: prep, long holds, quick flicks, relaxation breathing', () => {
     expect(phases[0].type).toBe('prep');
+    expect(kegelParts(level)).toEqual(['hold', 'quick', 'relaxation']);
     expect(phases.filter((p) => p.type === 'squeeze')).toHaveLength(level.reps);
     expect(phases.filter((p) => p.type === 'flick')).toHaveLength(level.quick);
-    expect(phases.findIndex((p) => p.type === 'break')).toBe(1 + level.reps * 2);
-    expect(totalSeconds(phases)).toBe(3 + 10 * 6 + 8 + 10 * 2);
+    expect(phases.filter((p) => p.type === 'breatheIn')).toHaveLength(BREATHS);
+    expect(phases.filter((p) => p.type === 'break')).toHaveLength(2);
+    expect(phases.some((p) => p.part === 'elevator')).toBe(false);
+    expect(totalSeconds(phases)).toBe(3 + 10 * 6 + 8 + 10 * 2 + 8 + BREATHS * (BREATH_IN + BREATH_OUT));
+  });
+
+  it('adds the elevator from level 3, in the right order', () => {
+    const l3 = KEGEL_LEVELS[2];
+    expect(kegelParts(l3)).toEqual(['hold', 'elevator', 'quick', 'relaxation']);
+    const ps = buildKegelPhases(l3);
+    const order = ps.map((p) => p.part).filter((p, i, a) => p && p !== a[i - 1]);
+    expect(order).toEqual(['hold', 'elevator', 'quick', 'relaxation']);
+    const elev = ps.filter((p) => p.part === 'elevator').map((p) => p.type);
+    expect(elev.slice(0, 6)).toEqual(['up1', 'up2', 'up3', 'down2', 'down1', 'release']);
+    expect(elev.filter((t) => t === 'up3')).toHaveLength(l3.elevator);
+  });
+
+  it('postures move from lying to sitting to standing', () => {
+    const order = ['lying', 'sitting', 'standing'];
+    const ranks = KEGEL_LEVELS.map((l) => order.indexOf(l.posture));
+    expect(ranks).toEqual([...ranks].sort((a, b) => a - b));
+    expect(ranks[0]).toBe(0);
+    expect(ranks[ranks.length - 1]).toBe(2);
+  });
+
+  it('ring scale tracks squeeze intensity', () => {
+    expect(phaseScale('up1', 1)).toBeCloseTo(1.04);
+    expect(phaseScale('up3', 1)).toBeCloseTo(1.12);
+    expect(phaseScale('down1', 1)).toBeCloseTo(1.04);
+    expect(phaseScale('release', 1)).toBeCloseTo(1);
+    expect(phaseScale('breatheIn', 1)).toBeCloseTo(1.1);
+    expect(phaseScale('prep', 0.5)).toBe(1);
   });
 
   it('locates the phase for an elapsed time', () => {

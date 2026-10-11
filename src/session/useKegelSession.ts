@@ -1,6 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { beep, sessionActive, TONE, vibrate } from '../lib/device';
-import { buildKegelPhases, isRelax, isSqueeze, phaseAt, type KegelLevel, type PhasePosition } from '../programs/kegel';
+import { buildKegelPhases, isSqueeze, phaseAt, type KegelLevel, type KegelPhaseType, type PhasePosition } from '../programs/kegel';
+
+// Rising pitch while squeezing up the elevator, falling on the way down;
+// soft low tones for breathing so the relaxation part stays calm.
+const PHASE_TONE: Partial<Record<KegelPhaseType, number>> = {
+  squeeze: TONE.squeeze, flick: TONE.squeeze,
+  up1: 560, up2: 660, up3: 760, down2: 600, down1: 520,
+  relax: TONE.relax, flickRelax: TONE.relax, release: TONE.relax, break: TONE.relax,
+  breatheIn: 392, breatheOut: 330,
+};
 
 export type KegelStatus = 'idle' | 'running' | 'paused';
 
@@ -42,10 +51,9 @@ export function useKegelSession(level: KegelLevel, onComplete: () => void) {
       if (p.index !== lastIndexRef.current) {
         lastIndexRef.current = p.index;
         const t = phases[p.index].type;
-        if (isSqueeze(t)) {
-          beep(TONE.squeeze);
-          vibrate(40);
-        } else if (isRelax(t) || t === 'break') beep(TONE.relax);
+        const tone = PHASE_TONE[t];
+        if (tone) beep(tone);
+        if (isSqueeze(t)) vibrate(40);
       }
       setPos(p);
       rafRef.current = requestAnimationFrame((t) => frameRef.current(t));
