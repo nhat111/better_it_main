@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useRef, useState } from 'react';
 import { ExerciseDemo } from '../components/ExerciseDemo';
 import { MuscleChips } from '../components/MuscleChips';
 import { MuscleMap } from '../components/MuscleMap';
@@ -25,6 +25,7 @@ export function PullPage() {
   const [result, setResult] = useState<'done' | 'stopped' | null>(null);
   const [unlocked, setUnlocked] = useState<number | null>(null);
   const [preview, setPreview] = useState<number | null>(null);
+  const runnerRef = useRef<HTMLElement>(null);
 
   const s = usePullSession(stage, () => {
     const { next, leveledUp } = completePull(getProgress(), dayKey(new Date()));
@@ -148,28 +149,29 @@ export function PullPage() {
         )}
       </section>
 
-      {!previewing && <section className={`card trainer ${s.mode === 'resting' ? 'resting' : active ? 'working' : ''}`} aria-live="polite">
+      {!previewing && <section ref={runnerRef} className={`card trainer ${s.mode === 'resting' ? 'resting' : active ? 'working' : ''}`} aria-live="polite">
         <div className="progress" aria-hidden="true">
           <i style={{ width: `${s.progress * 100}%` }} />
         </div>
         <div className="eyebrow">{eyebrow}</div>
-        {step && (
-          <ExerciseDemo
-            key={step.kind === 'rest' ? `next-${step.next.key}` : step.exercise.key}
-            exercise={step.kind === 'rest' ? step.next.key : step.exercise.key}
-            name={EXERCISES[step.kind === 'rest' ? step.next.key : step.exercise.key].name}
-          />
-        )}
         <div className="runner-title">{title}</div>
         {step && <MuscleChips targets={EXERCISE_MUSCLES[step.kind === 'rest' ? step.next.key : step.exercise.key]} compact />}
-        <div>
-          <div className="big">{big}</div>
-          <div className="muted small">{unit}</div>
+        <div className={`runner-row${step ? '' : ' runner-row-idle'}`}>
+          {step && (
+            <ExerciseDemo
+              key={step.kind === 'rest' ? `next-${step.next.key}` : step.exercise.key}
+              exercise={step.kind === 'rest' ? step.next.key : step.exercise.key}
+              name={EXERCISES[step.kind === 'rest' ? step.next.key : step.exercise.key].name}
+            />
+          )}
+          <div className="runner-count">
+            <div className="big">{big}</div>
+            <div className="muted small">{unit}</div>
+          </div>
         </div>
-        <p className="cue">{cue}</p>
         <div className="row center">
           {!active && (
-            <button className="btn btn-lg" onClick={() => { setResult(null); setUnlocked(null); s.begin(); }}>
+            <button className="btn btn-lg" onClick={() => { setResult(null); setUnlocked(null); s.begin(); runnerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>
               {vi.pull.begin}
             </button>
           )}
@@ -185,6 +187,7 @@ export function PullPage() {
             </button>
           )}
         </div>
+        <p className="cue">{cue}</p>
       </section>}
 
       <Guide items={PULL_GUIDE} />

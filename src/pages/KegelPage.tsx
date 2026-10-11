@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Guide } from '../components/Guide';
 import { KegelDiagram, KegelPartPreview, PostureIcon } from '../components/KegelDiagram';
 import { Roadmap } from '../components/Roadmap';
@@ -17,6 +17,7 @@ export function KegelPage() {
   const level = KEGEL_LEVELS[kegel.level];
   const [viewing, setViewing] = useState<number | null>(null);
   const [demoPart, setDemoPart] = useState<KegelPart | null>(null);
+  const trainerRef = useRef<HTMLElement>(null);
   const viewIdx = viewing ?? kegel.level;
   const previewing = viewIdx !== kegel.level;
   const shown = KEGEL_LEVELS[viewIdx];
@@ -112,18 +113,20 @@ export function KegelPage() {
         )}
       </section>
 
-      {!previewing && <section className={`card trainer ${t && isSqueeze(t) ? 'squeeze' : ''}`} aria-live="polite">
-        <div className="ring">
-          <svg viewBox="0 0 100 100" aria-hidden="true">
-            <circle className="ring-track" cx="50" cy="50" r="45" />
-            <circle className="ring-prog" cx="50" cy="50" r="45" strokeDasharray={C} strokeDashoffset={C * (1 - frac)} />
-          </svg>
-          <div className="ring-core" style={{ transform: `scale(${scale.toFixed(3)})` }}>
-            <div className="phase">{t ? vi.kegel.phase[t] : vi.kegel.ready}</div>
-            <div className="count">{s.pos ? Math.ceil(s.pos.remaining) : '—'}</div>
+      {!previewing && <section ref={trainerRef} className={`card trainer ${t && isSqueeze(t) ? 'squeeze' : ''}`} aria-live="polite">
+        <div className="trainer-row">
+          <div className="ring">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <circle className="ring-track" cx="50" cy="50" r="45" />
+              <circle className="ring-prog" cx="50" cy="50" r="45" strokeDasharray={C} strokeDashoffset={C * (1 - frac)} />
+            </svg>
+            <div className="ring-core" style={{ transform: `scale(${scale.toFixed(3)})` }}>
+              <div className="phase">{t ? vi.kegel.phase[t] : vi.kegel.ready}</div>
+              <div className="count">{s.pos ? Math.ceil(s.pos.remaining) : '—'}</div>
+            </div>
           </div>
+          <KegelDiagram type={t ?? null} fraction={frac} part={s.phase?.part} />
         </div>
-        <KegelDiagram type={t ?? null} fraction={frac} part={s.phase?.part} />
         <p className="cue">
           {s.status === 'paused' ? (
             vi.kegel.paused
@@ -142,7 +145,7 @@ export function KegelPage() {
         </p>
         <div className="row center">
           {!active && (
-            <button className="btn btn-lg" onClick={() => { setMessage(null); s.start(); }}>
+            <button className="btn btn-lg" onClick={() => { setMessage(null); s.start(); trainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>
               {message?.done ? vi.kegel.again : vi.common.start}
             </button>
           )}

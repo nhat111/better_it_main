@@ -358,3 +358,20 @@ a { color: inherit; text-decoration: none; }
 .kpreview figcaption { display: grid; gap: 4px; font-size: .82rem; color: var(--muted); min-width: 0; }
 .kpreview figcaption strong { color: var(--fg); font-family: var(--display); font-size: 1.2rem; height: 1.3em; overflow: hidden; }
 .trainer .ring { width: min(220px, 60vw); }
+
+/* ---------- compact trainers that fit one phone screen ---------- */
+.trainer { scroll-margin-top: 8px; }
+.trainer-row { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; align-items: center; }
+.trainer .trainer-row .ring { width: 100%; max-width: 220px; justify-self: center; }
+.trainer-row .kdiagram-md { width: 100%; max-width: 220px; justify-self: center; }
+.trainer-row .phase { font-size: clamp(1.05rem, 5.2vw, 1.75rem); }
+.trainer-row .count { font-size: clamp(2rem, 10vw, 3.2rem); }
+.runner-row { width: 100%; display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 8px; align-items: center; }
+.runner-row-idle { grid-template-columns: 1fr; }
+.runner-row .demo-md { width: 100%; max-width: 240px; justify-self: center; }
+.runner-row .demo-md svg { width: 100%; }
+.runner-count { display: grid; justify-items: center; }
+.trainer .cue { min-height: 2.6em; }
+.trainer.working, .trainer.resting { gap: 10px; }
+.trainer.working .runner-title, .trainer.resting .runner-title { font-size: 1.45rem; }
+.runner-row .demo-md { width: min(100%, 240px, calc(var(--app-height, 100dvh) * 0.3)); }
