@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { Link, Route, Routes, useLocation } from 'react-router';
 import { Layout } from './components/Layout';
+import { useApplyTheme } from './lib/theme';
+import { useProgress } from './storage/progress';
 import { vi } from './i18n/vi';
 import { HomePage } from './pages/HomePage';
 import { KegelPage } from './pages/KegelPage';
@@ -26,6 +28,7 @@ function NotFound() {
 }
 
 export function App() {
+  useApplyTheme(useProgress().prefs.theme);
   return (
     <>
       <ScrollToTop />

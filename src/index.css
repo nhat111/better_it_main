@@ -28,8 +28,9 @@
   --map-idle: #c4ced6;
   color-scheme: light;
 }
+/* Theme: follows the phone unless the user picks one in Settings (data-theme on <html>). */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --bg: #0f161c;
     --surface: #17212a;
     --fg: #e4ebf0;
@@ -53,6 +54,30 @@
     --map-idle: #34444f;
     color-scheme: dark;
   }
+}
+:root[data-theme='dark'] {
+  --bg: #0f161c;
+  --surface: #17212a;
+  --fg: #e4ebf0;
+  --muted: #8fa0ad;
+  --line: #26333e;
+  --accent: #5bb3d2;
+  --accent-soft: #1b3442;
+  --on-accent: #0f161c;
+  --warm: #e39a4f;
+  --warm-soft: #3a2a1a;
+  --good: #5cc489;
+  --bad: #ef7a68;
+  --skin: #d6a37e;
+  --skin-edge: #8f6346;
+  --hair: #120e0c;
+  --shorts: #5a6b79;
+  --bar: #9aa8b4;
+  --muscle: #f2643f;
+  --muscle-soft: #8c4632;
+  --map-base: #24313b;
+  --map-idle: #34444f;
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -306,3 +331,30 @@ a { color: inherit; text-decoration: none; }
 .stats4 .tile-off b { color: var(--muted); }
 .stats4 b { font-size: 1.35rem; }
 .posture { margin: 0; font-weight: 600; font-size: .88rem; }
+
+/* ---------- Kegel illustrations ---------- */
+.stats4.tiles button.tile { font: inherit; color: inherit; border: 1.5px solid transparent; background: var(--bg); border-radius: 10px; padding: 10px 4px; cursor: pointer; display: grid; gap: 2px; }
+.stats4.tiles button.tile[aria-pressed='true'] { border-color: var(--accent); background: var(--accent-soft); }
+.stats4.tiles button.tile span { font-size: .7rem; line-height: 1.25; }
+.posture { display: flex; align-items: center; gap: 8px; }
+.posture-icon { width: 40px; height: 34px; flex: none; fill: none; stroke: var(--fg); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.posture-icon circle { fill: var(--fg); stroke: none; }
+.posture-icon .pi-floor { stroke: var(--muted); stroke-width: 1.6; }
+.kdiagram { display: block; width: 100%; height: auto; }
+.kdiagram-md { width: min(220px, 62vw); }
+.kdiagram-sm { width: min(170px, 46vw); flex: none; }
+.kd-wall { fill: none; stroke: var(--line); stroke-width: 3; stroke-linecap: round; }
+.kd-diaphragm { fill: none; stroke: var(--muted); stroke-width: 3.5; stroke-linecap: round; opacity: .45; }
+.kd-diaphragm.on { stroke: var(--accent); opacity: 1; }
+.kd-bone { fill: var(--map-idle); }
+.kd-sling { fill: none; stroke: var(--muscle-soft); stroke-width: 6; stroke-linecap: round; }
+.kd-sling.on { stroke: var(--muscle); }
+.kd-arrow { fill: none; stroke: var(--accent); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.kd-arrow.up { stroke: var(--muscle); }
+.kd-floor { fill: var(--line); }
+.kd-floor.on { fill: var(--muscle); }
+.kd-label { font-size: 8px; fill: var(--muted); font-family: var(--body); text-anchor: middle; }
+.kpreview { margin: 0; display: flex; gap: 12px; align-items: center; background: var(--bg); border-radius: 10px; padding: 10px; }
+.kpreview figcaption { display: grid; gap: 4px; font-size: .82rem; color: var(--muted); min-width: 0; }
+.kpreview figcaption strong { color: var(--fg); font-family: var(--display); font-size: 1.2rem; height: 1.3em; overflow: hidden; }
+.trainer .ring { width: min(220px, 60vw); }

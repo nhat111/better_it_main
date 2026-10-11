@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BREATH_IN, BREATH_OUT, BREATHS, buildKegelPhases, KEGEL_LEVELS, kegelMinutes, kegelParts, phaseAt, phaseScale, totalSeconds } from './kegel';
+import { BREATH_IN, BREATH_OUT, BREATHS, buildKegelPhases, KEGEL_LEVELS, diagramState, kegelMinutes, kegelParts, partPreview, phaseAt, phaseScale, totalSeconds } from './kegel';
 import { buildPullSteps, formatDose, formatRest, STAGES } from './pullup';
 
 describe('kegel', () => {
@@ -49,6 +49,25 @@ describe('kegel', () => {
     expect(phaseAt(phases, 0)).toEqual({ index: 0, remaining: 3, fraction: 0 });
     expect(phaseAt(phases, 4.5)).toMatchObject({ index: 1, remaining: 1.5, fraction: 0.5 });
     expect(phaseAt(phases, totalSeconds(phases))).toBeNull();
+  });
+
+  it('every timed part grows (or holds) with the level', () => {
+    for (let i = 1; i < KEGEL_LEVELS.length; i++) {
+      const a = KEGEL_LEVELS[i - 1];
+      const b = KEGEL_LEVELS[i];
+      expect(b.hold).toBeGreaterThanOrEqual(a.hold);
+      expect(b.quick).toBeGreaterThanOrEqual(a.quick);
+      expect(b.elevator).toBeGreaterThanOrEqual(a.elevator);
+      expect(b.elevatorStep).toBeGreaterThanOrEqual(a.elevatorStep);
+    }
+  });
+
+  it('diagram: squeeze lifts the sling, in-breath lowers sling and diaphragm', () => {
+    expect(diagramState('squeeze', 1).lift).toBeCloseTo(1);
+    expect(diagramState('up1', 1).lift).toBeCloseTo(1 / 3);
+    expect(diagramState('breatheIn', 1)).toEqual({ lift: -0.3, diaphragm: 1 });
+    expect(diagramState('breatheOut', 1).diaphragm).toBe(0);
+    for (const part of ['hold', 'elevator', 'quick', 'relaxation'] as const) expect(partPreview(part).length).toBeGreaterThan(1);
   });
 
   it('gets longer at higher levels', () => {

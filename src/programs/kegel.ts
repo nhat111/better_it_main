@@ -10,20 +10,22 @@ export interface KegelLevel {
   reps: number;
   /** "Elevator" reps (3-step squeeze up, step down); 0 = not yet. */
   elevator: number;
+  /** Seconds held on each elevator floor. */
+  elevatorStep: number;
   /** Quick 1 s squeeze / 1 s release pairs. */
   quick: number;
   posture: Posture;
 }
 
 export const KEGEL_LEVELS: readonly KegelLevel[] = [
-  { name: 'Làm quen', hold: 3, rest: 3, reps: 10, elevator: 0, quick: 10, posture: 'lying' },
-  { name: 'Khởi động', hold: 4, rest: 4, reps: 10, elevator: 0, quick: 10, posture: 'lying' },
-  { name: 'Nền tảng', hold: 5, rest: 5, reps: 12, elevator: 3, quick: 12, posture: 'lying' },
-  { name: 'Tăng sức', hold: 6, rest: 6, reps: 12, elevator: 3, quick: 15, posture: 'sitting' },
-  { name: 'Bền bỉ', hold: 8, rest: 8, reps: 12, elevator: 4, quick: 15, posture: 'sitting' },
-  { name: 'Kiểm soát', hold: 10, rest: 10, reps: 10, elevator: 4, quick: 20, posture: 'standing' },
-  { name: 'Nâng cao', hold: 12, rest: 10, reps: 10, elevator: 5, quick: 20, posture: 'standing' },
-  { name: 'Thành thạo', hold: 15, rest: 10, reps: 10, elevator: 5, quick: 25, posture: 'standing' },
+  { name: 'Làm quen', hold: 3, rest: 3, reps: 10, elevator: 0, elevatorStep: 0, quick: 10, posture: 'lying' },
+  { name: 'Khởi động', hold: 4, rest: 4, reps: 10, elevator: 0, elevatorStep: 0, quick: 10, posture: 'lying' },
+  { name: 'Nền tảng', hold: 5, rest: 5, reps: 12, elevator: 3, elevatorStep: 2, quick: 12, posture: 'lying' },
+  { name: 'Tăng sức', hold: 6, rest: 6, reps: 12, elevator: 3, elevatorStep: 2, quick: 15, posture: 'sitting' },
+  { name: 'Bền bỉ', hold: 8, rest: 8, reps: 12, elevator: 4, elevatorStep: 3, quick: 15, posture: 'sitting' },
+  { name: 'Kiểm soát', hold: 10, rest: 10, reps: 10, elevator: 4, elevatorStep: 3, quick: 20, posture: 'standing' },
+  { name: 'Nâng cao', hold: 12, rest: 10, reps: 10, elevator: 5, elevatorStep: 4, quick: 20, posture: 'standing' },
+  { name: 'Thành thạo', hold: 15, rest: 10, reps: 10, elevator: 5, elevatorStep: 4, quick: 25, posture: 'standing' },
 ];
 
 /** Completed sessions at a level before the next one unlocks. */
@@ -31,8 +33,7 @@ export const KEGEL_SESSIONS_TO_LEVEL_UP = 3;
 
 export const PREP_SECONDS = 3;
 export const BREAK_SECONDS = 8;
-/** Elevator: seconds per step up/down, and the full release at the end of a rep. */
-export const ELEVATOR_STEP = 2;
+/** Elevator: full release at the end of each rep (step length is per level). */
 export const ELEVATOR_RELEASE = 4;
 /** Relaxation: slow belly breaths, inhale / exhale seconds. */
 export const BREATH_IN = 4;
@@ -75,7 +76,7 @@ export function buildKegelPhases(level: KegelLevel): KegelPhase[] {
     } else if (part === 'elevator') {
       for (let rep = 1; rep <= level.elevator; rep++) {
         const of = level.elevator;
-        for (const type of ['up1', 'up2', 'up3', 'down2', 'down1'] as const) out.push({ type, seconds: ELEVATOR_STEP, part, rep, of });
+        for (const type of ['up1', 'up2', 'up3', 'down2', 'down1'] as const) out.push({ type, seconds: level.elevatorStep, part, rep, of });
         out.push({ type: 'release', seconds: ELEVATOR_RELEASE, part, rep, of });
       }
     } else if (part === 'quick') {
@@ -151,4 +152,42 @@ export function phaseScale(t: KegelPhaseType, fraction: number): number {
   // Step changes happen quickly at the start of the phase, then hold.
   const k = Math.min(1, fraction * 3);
   return 1 + 0.12 * (a + (b - a) * k);
+}
+
+/**
+ * Pelvic-floor diagram state for a phase: `lift` is how far the muscle sling
+ * rises (−0.3 = gently lowered on an in-breath, 1 = full squeeze) and
+ * `diaphragm` how far the diaphragm has descended (0..1, breathing only).
+ * Inhale: diaphragm and pelvic floor move down together; exhale: both return.
+ */
+export function diagramState(t: KegelPhaseType, fraction: number): { lift: number; diaphragm: number } {
+  if (t === 'breatheIn') return { lift: -0.3 * fraction, diaphragm: fraction };
+  if (t === 'breatheOut') return { lift: -0.3 * (1 - fraction), diaphragm: 1 - fraction };
+  return { lift: (phaseScale(t, fraction) - 1) / 0.12, diaphragm: 0 };
+}
+
+/** A short looping example of one part, for the illustrated preview. */
+export function partPreview(part: KegelPart): KegelPhase[] {
+  switch (part) {
+    case 'hold':
+      return [
+        { type: 'squeeze', seconds: 3, part },
+        { type: 'relax', seconds: 2.5, part },
+      ];
+    case 'elevator':
+      return [
+        ...(['up1', 'up2', 'up3', 'down2', 'down1'] as const).map((type) => ({ type, seconds: 1.3, part })),
+        { type: 'release', seconds: 1.6, part },
+      ];
+    case 'quick':
+      return [
+        { type: 'flick', seconds: 0.7, part },
+        { type: 'flickRelax', seconds: 0.7, part },
+      ];
+    case 'relaxation':
+      return [
+        { type: 'breatheIn', seconds: 3, part },
+        { type: 'breatheOut', seconds: 4, part },
+      ];
+  }
 }

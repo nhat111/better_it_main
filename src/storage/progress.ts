@@ -10,6 +10,8 @@ export const STORAGE_KEY = 'bm:progress:v1';
 /** Key used by the first single-file version of the app. */
 const LEGACY_KEY = 'kegelCoach.v1';
 
+export type Theme = 'auto' | 'light' | 'dark';
+
 export interface MaxTest {
   date: string;
   reps: number;
@@ -19,7 +21,7 @@ export interface Progress {
   version: 1;
   kegel: { level: number; sessionsAtLevel: number; log: DayLog };
   pull: { stage: number; sessionsAtStage: number; log: DayLog; maxTests: MaxTest[] };
-  prefs: { sound: boolean; installHintDismissed: boolean };
+  prefs: { sound: boolean; installHintDismissed: boolean; theme: Theme };
 }
 
 export function emptyProgress(): Progress {
@@ -27,7 +29,7 @@ export function emptyProgress(): Progress {
     version: 1,
     kegel: { level: 0, sessionsAtLevel: 0, log: {} },
     pull: { stage: 0, sessionsAtStage: 0, log: {}, maxTests: [] },
-    prefs: { sound: true, installHintDismissed: false },
+    prefs: { sound: true, installHintDismissed: false, theme: 'auto' },
   };
 }
 
@@ -69,6 +71,7 @@ export function parseProgress(raw: unknown): Progress {
   if (isObj(raw.prefs)) {
     p.prefs.sound = raw.prefs.sound !== false;
     p.prefs.installHintDismissed = raw.prefs.installHintDismissed === true;
+    if (raw.prefs.theme === 'light' || raw.prefs.theme === 'dark') p.prefs.theme = raw.prefs.theme;
   }
   return p;
 }

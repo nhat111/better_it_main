@@ -21,6 +21,9 @@ pull-up program. Same stack and conventions as KoDevTalk (github.com/nhat111/kor
 - `src/pages/` Home, Kegel, Xà đơn, Tiến độ, Cài đặt (routes `/`, `/kegel`, `/xa-don`, `/tien-do`, `/cai-dat`)
 - Kegel session = parts hold → elevator (level 3+) → quick → relaxation breathing; posture per level
   (lying → sitting → standing). Built by `buildKegelPhases`; ring size from `phaseScale`.
+  `KegelDiagram` (trunk canister: diaphragm + pelvic-floor sling, driven by `diagramState`) shows
+  live in the trainer and as looping part previews (`partPreview`) on the plan card.
+- Theme: `prefs.theme` auto/light/dark sets `data-theme` on <html> (`src/lib/theme.ts`).
 - `src/session/` `useKegelSession`, `usePullSession`
 - `src/programs/demos.ts` + `src/components/ExerciseDemo.tsx` animated illustrated demos (one per
   pull-up exercise; keyframe poses in a 120×140 box, eased and looped; static under reduced motion).

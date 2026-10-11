@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Guide } from '../components/Guide';
+import { KegelDiagram, KegelPartPreview, PostureIcon } from '../components/KegelDiagram';
 import { Roadmap } from '../components/Roadmap';
 import { SwitchNotice } from '../components/SwitchNotice';
 import { KEGEL_GUIDE } from '../content/guides';
 import { vi } from '../i18n/vi';
 import { dayKey } from '../lib/date';
-import { BREATHS, isSqueeze, KEGEL_LEVELS, KEGEL_SESSIONS_TO_LEVEL_UP, kegelMinutes, kegelParts, phaseScale } from '../programs/kegel';
+import { BREATHS, type KegelPart, isSqueeze, KEGEL_LEVELS, KEGEL_SESSIONS_TO_LEVEL_UP, kegelMinutes, kegelParts, phaseScale } from '../programs/kegel';
 import { useKegelSession } from '../session/useKegelSession';
 import { completeKegel, getProgress, setProgress, update, useProgress } from '../storage/progress';
 
@@ -15,6 +16,7 @@ export function KegelPage() {
   const { kegel } = useProgress();
   const level = KEGEL_LEVELS[kegel.level];
   const [viewing, setViewing] = useState<number | null>(null);
+  const [demoPart, setDemoPart] = useState<KegelPart | null>(null);
   const viewIdx = viewing ?? kegel.level;
   const previewing = viewIdx !== kegel.level;
   const shown = KEGEL_LEVELS[viewIdx];
@@ -70,16 +72,37 @@ export function KegelPage() {
             {previewing ? vi.roadmap.preview : `${vi.roadmap.current} · ${vi.roadmap.sessions(kegel.sessionsAtLevel, KEGEL_SESSIONS_TO_LEVEL_UP)}`}
           </span>
         </div>
-        <p className="posture">{vi.kegel.postureLine(vi.kegel.posture[shown.posture])}</p>
-        <div className="stats4">
-          <div><b>{shown.reps}×{shown.hold}s</b><span>{vi.kegel.tiles.hold}</span></div>
-          <div className={shown.elevator ? '' : 'tile-off'}>
-            <b>{shown.elevator ? vi.kegel.times(shown.elevator) : '—'}</b>
-            <span>{shown.elevator ? vi.kegel.tiles.elevator : `${vi.kegel.tiles.elevator} ${vi.kegel.elevatorLocked}`}</span>
-          </div>
-          <div><b>{shown.quick}</b><span>{vi.kegel.tiles.quick}</span></div>
-          <div><b>{BREATHS}</b><span>{vi.kegel.tiles.relaxation}</span></div>
+        <p className="posture">
+          <PostureIcon posture={shown.posture} />
+          {vi.kegel.postureLine(vi.kegel.posture[shown.posture])}
+        </p>
+        <div className="stats4 tiles">
+          {(['hold', 'elevator', 'quick', 'relaxation'] as const).map((part) => {
+            const off = part === 'elevator' && !shown.elevator;
+            const value =
+              part === 'hold' ? `${shown.reps}×${shown.hold}s`
+              : part === 'elevator' ? (off ? '—' : vi.kegel.times(shown.elevator))
+              : part === 'quick' ? String(shown.quick)
+              : String(BREATHS);
+            const label =
+              part === 'elevator'
+                ? off ? `${vi.kegel.tiles.elevator} ${vi.kegel.elevatorLocked}` : `${vi.kegel.tiles.elevator} · ${shown.elevatorStep}s/tầng`
+                : vi.kegel.tiles[part];
+            return (
+              <button
+                key={part}
+                type="button"
+                className={`tile${off ? ' tile-off' : ''}`}
+                aria-pressed={demoPart === part}
+                onClick={() => setDemoPart(demoPart === part ? null : part)}
+              >
+                <b>{value}</b>
+                <span>{label}</span>
+              </button>
+            );
+          })}
         </div>
+        {demoPart ? <KegelPartPreview key={demoPart} part={demoPart} /> : <p className="muted small">{vi.kegel.tapHint}</p>}
         {previewing ? (
           <SwitchNotice what={vi.roadmap.levelName(viewIdx + 1)} done={kegel.sessionsAtLevel} onSwitch={switchLevel} onBack={() => view(kegel.level)} />
         ) : (
@@ -100,6 +123,7 @@ export function KegelPage() {
             <div className="count">{s.pos ? Math.ceil(s.pos.remaining) : '—'}</div>
           </div>
         </div>
+        <KegelDiagram type={t ?? null} fraction={frac} part={s.phase?.part} />
         <p className="cue">
           {s.status === 'paused' ? (
             vi.kegel.paused

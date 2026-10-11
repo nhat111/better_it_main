@@ -43,7 +43,18 @@ export function SettingsPage() {
     <div className="page">
       <h1 className="h1">{vi.settings.title}</h1>
 
-      <section className="card">
+      <section className="card stack">
+        <div className="row-between">
+          <span>{vi.settings.theme}</span>
+          <div className="segmented" role="group" aria-label={vi.settings.theme}>
+            {(['auto', 'light', 'dark'] as const).map((t) => (
+              <button key={t} aria-pressed={prefs.theme === t} onClick={() => update((p) => ({ ...p, prefs: { ...p.prefs, theme: t } }))}>
+                {t === 'auto' ? vi.settings.themeAuto : t === 'light' ? vi.settings.themeLight : vi.settings.themeDark}
+              </button>
+            ))}
+          </div>
+        </div>
+        <p className="muted small">{vi.settings.themeHelp}</p>
         <div className="row-between">
           <span>{vi.settings.sound}</span>
           <div className="segmented" role="group" aria-label={vi.settings.sound}>
