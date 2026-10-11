@@ -126,7 +126,8 @@ a { color: inherit; text-decoration: none; }
   border-bottom: 1px solid var(--line);
 }
 .brand { display: flex; align-items: center; gap: 8px; font-family: var(--display); font-weight: 700; font-size: 1.45rem; letter-spacing: .02em; }
-.brand-mark { width: 22px; height: 22px; border-radius: 50%; border: 4px solid var(--accent); border-right-color: var(--warm); }
+.brand-mark { flex: none; border-radius: 8px; }
+.brand b { color: var(--accent); font-weight: 700; }
 .content { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 18px 16px 28px; -webkit-overflow-scrolling: touch; }
 .page { max-width: 560px; margin: 0 auto; display: grid; gap: 16px; }
 .tabbar {

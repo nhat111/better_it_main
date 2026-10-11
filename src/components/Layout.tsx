@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router';
 import { vi } from '../i18n/vi';
+import { BrandMark } from './BrandMark';
 import { Icon, type IconName } from './Icon';
 import { UpdateBanner } from './UpdateBanner';
 
@@ -15,8 +16,8 @@ export function Layout() {
     <div className="shell">
       <header className="topbar">
         <NavLink to="/" className="brand">
-          <span className="brand-mark" aria-hidden="true" />
-          {vi.app.name}
+          <BrandMark />
+          <span>Man<b>Fit</b></span>
         </NavLink>
         <NavLink to="/cai-dat" className="icon-btn" aria-label={vi.nav.settings}>
           <Icon name="gear" />
